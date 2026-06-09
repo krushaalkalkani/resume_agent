@@ -1,0 +1,25 @@
+# Configuration for the resume agent.
+# The Notion database IDs below were discovered from your "Resume Data Base" page.
+# Each child page holds one inline database; these are their IDs.
+
+notion:
+  # Parent page that contains all the source databases (for reference).
+  resume_data_base_page: "37652ecb18418020b0f4ffc372fcaf7b"
+  databases:
+    personal_information: "37752ecb184180e58161cd5ca4d01757"
+    education:            "37752ecb184180bfbbf5c148963e75e2"
+    technical_skills:     "6657b42875c74b16b12cf83c794b657d"
+    experience:           "37752ecb1841802eb937d273cdf56597"
+    projects:             "91ab17c097214f40a59b89fd0ece293b"
+    certifications:       "c35698487a054cf98fcb20b098e5efbe"
+    leadership:           "c9a6f94829b64d6fbc5b72dfb0f5d773"
+
+models:
+  # Used for job-tailoring (Phase 3) and for auto-fixing LaTeX compile errors.
+  tailor:  "claude-opus-4-8"
+  reflect: "claude-sonnet-4-6"
+
+render:
+  template: "library/jake.tex.j2"   # active template; see templates/library/README.md
+  max_pages: 1          # reflection step flags the resume if it exceeds this
+  output_basename: "resume"

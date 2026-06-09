@@ -1,0 +1,239 @@
+% ============================================================================
+% REFERENCE ONLY — original pdfLaTeX template (Jake Gutierrez), kept verbatim.
+% The pipeline does NOT compile this file; it renders templates/library/jake.tex.j2
+% (a data-driven, Tectonic/XeTeX-safe adaptation of this layout).
+% This copy is here so the "good template" is preserved exactly as collected.
+% ============================================================================
+%-------------------------
+% Resume in Latex
+% Author : Jake Gutierrez
+% Based off of: https://github.com/sb2nov/resume
+% License : MIT
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+\usepackage{lmodern}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{fontawesome5}
+\usepackage{multicol}
+\setlength{\multicolsep}{-3.0pt}
+\setlength{\columnsep}{-1pt}
+\input{glyphtounicode}
+
+
+%----------FONT OPTIONS----------
+% sans-serif
+% \usepackage[sfdefault]{FiraSans}
+% \usepackage[sfdefault]{roboto}
+% \usepackage[sfdefault]{noto-sans}
+% \usepackage[default]{sourcesanspro}
+
+% serif
+% \usepackage{CormorantGaramond}
+% \usepackage{charter}
+
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.6in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1.19in}
+\addtolength{\topmargin}{-.7in}
+\addtolength{\textheight}{1.4in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large\bfseries
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\classesList}[4]{
+    \item\small{
+        {#1 #2 #3 #4 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{1.0\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textbf{\small #2} \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{1.001\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & \textbf{\small #2}\\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemi{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.0in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+%----------HEADING----------
+% \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+%   \textbf{\href{http://sourabhbajaj.com/}{\Large Sourabh Bajaj}} & Email : \href{mailto:sourabh@sourabhbajaj.com}{sourabh@sourabhbajaj.com}\\
+%   \href{http://sourabhbajaj.com/}{http://www.sourabhbajaj.com} & Mobile : +1-123-456-7890 \\
+% \end{tabular*}
+
+\begin{center}
+    {\Huge Krushal Kalkani} \\ \vspace{5pt}
+    \small \raisebox{-0.1\height}
+    \ (954)-910-6659 ~$|$~
+    \href{mailto:krushalkalkani06@gmail.com}{\raisebox{-0.2\height}\ {krushalkalkani06@gmail.com}} ~$|$~
+    \href{https://linkedin.com/in/krushal-kalkani}{\raisebox{-0.2\height}\ {linkedin.com/in/krushal-kalkani/}} ~$|$~
+    \href{https://github.com/krushaalkalkani}{\raisebox{-0.2\height}\ {github.com/krushaalkalkani}}
+    \vspace{-8pt}
+\end{center}
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Florida Atlantic University(FAU)}{Aug 2024 -- May 2026}
+      {Master of Science in Computer Science; GPA: 3.5/4.0}{Boca Raton, Florida}
+      \resumeItemListStart
+        \resumeItem{\textbf{Relevant Coursework:} Machine Learning, Deep Learning, Reinforcement Learning, Natural Language Processing, AI \& ML in Production, Data Science}
+      \resumeItemListEnd
+    \resumeSubheading
+      {Gujarat Technological University(GTU)}{Jun 2019 -- May 2023}
+      {Bachelor of Engineering in Computer Engineering; GPA: 3.8/4.0}{Ahmedabad, India}
+      \vspace{1pt}
+
+  \resumeSubHeadingListEnd
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Florida Atlantic University}{Jan 2025 -- Aug 2025}
+      {Research Assistant}{Boca Raton, FL}
+      \resumeItemListStart
+        \resumeItem{Developed real-time depth camera pipeline in Python (Intel RealSense D415, 30 Hz, $<$40 ms latency), extracting stabilogram metrics including path length, mean velocity, and RMS sway in anteroposterior and mediolateral directions.}
+        \resumeItem{Co-authored MDPI Sensors paper on portable 3D balance assessment, achieving ICC reliability of 0.84--0.96 against lab-based Optotrak system.}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Brainvire Infotech Pvt. Ltd.}{Feb 2023 -- Jan 2024}
+      {Software Developer}{Ahmedabad, India}
+      \resumeItemListStart
+        \resumeItem{Developed and customized Odoo ERP modules (Python ORM) for sales and inventory workflows, automating business processes for enterprise clients.}
+        \resumeItem{Optimized Hatchet e-commerce platform backend and database queries, improving site performance by 75\% and contributing to a 35\% revenue lift.}
+        \resumeItem{Built responsive frontend components using JavaScript, Bootstrap, and HTML/CSS, improving user workflow efficiency across enterprise client dashboards.}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+\vspace{-16pt}
+
+%-----------PROJECTS-----------
+\section{Projects}
+    \vspace{-5pt}
+    \resumeSubHeadingListStart
+      \resumeProjectHeading
+          {\textbf{Heart Disease Prediction} $|$ \emph{Python, Scikit-learn, XGBoost} $|$ \href{https://github.com/krushaalkalkani/heart-disease-predictor}{\underline{GitHub}} $|$ \href{https://huggingface.co/spaces/krushalkalkani/heart-disease-predictor}{\underline{Live Demo}}}{Mar 2026 -- Present}
+          \resumeItemListStart
+            \resumeItem{Built end-to-end ML pipeline on 8,763 patient records, engineering 23 features and benchmarking Logistic Regression, Random Forest, and XGBoost with class-weight balancing to prioritize recall}
+            \resumeItem{Developed interactive Streamlit web app for real-time heart disease risk prediction and deployed to Hugging Face Spaces using Docker containerization}
+          \resumeItemListEnd
+          \vspace{-13pt}
+      \resumeProjectHeading
+          {\textbf{Smart Resume Analyzer} $|$ \emph{Python, Scikit-learn, TF-IDF} $|$ \href{https://github.com/krushaalkalkani/resume-analyzer}{\underline{GitHub}} $|$ \href{https://huggingface.co/spaces/krushalkalkani/resume-analyzer}{\underline{Live Demo}}}{Feb 2026 -- Present}
+          \resumeItemListStart
+            \resumeItem{Built NLP pipeline on 2,484 labeled resumes across 24 job categories using TF-IDF vectorization; benchmarked Logistic Regression, Random Forest, and SVM with macro F1-score evaluation}
+            \resumeItem{Engineered keyword-based skill extraction module and deployed Streamlit app on Hugging Face Spaces with PDF upload support for real-time category prediction and skill gap recommendations}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+\vspace{-15pt}
+
+
+%-----------TECHNICAL SKILLS-----------
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Languages}{: Python, JavaScript, SQL} \\
+     \textbf{ML / AI Frameworks}{: Scikit-learn, TensorFlow, Keras, PyTorch, XGBoost, NLTK, OpenAI API} \\
+     \textbf{ML Concepts}{: Deep Learning (ANN, CNN), NLP, LLMs, Ensemble Methods, Feature Engineering, Cross-Validation, Hyperparameter Tuning, Hugging Face Transformers} \\
+     \textbf{Data \& Web}{: NumPy, Pandas, SciPy, Matplotlib, Seaborn, FastAPI, Streamlit, React, Node.js, REST APIs} \\
+     \textbf{Developer Tools}{: Git, GitHub, GitHub Actions, Docker, VS Code, Jupyter, Google Colab, Linux, MySQL} \\
+    }}
+ \end{itemize}
+ \vspace{-16pt}
+
+%-----------CERTIFICATIONS-----------
+\section{Certifications}
+    \begin{itemize}[leftmargin=0.15in, label={}]
+        \small{\item{
+            \textbf{Machine Learning Specialization} $|$ \textit{DeepLearning.AI -- Stanford Online}  \\
+            \textbf{Generative AI with Large Language Models} $|$ \textit{DeepLearning.AI -- AWS}  \\
+            \textbf{Retrieval Augmented Generation (RAG)} $|$ \textit{DeepLearning.AI}  \\
+            \textbf{Agentic AI} $|$ \textit{DeepLearning.AI}  \\
+            \textbf{Machine Learning in Production} $|$ \textit{DeepLearning.AI}
+        }}
+    \end{itemize}
+
+%-----------LEADERSHIP-----------
+\section{Leadership}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Elite Owl Ambassador}{Mar 2025 -- May 2026}
+      {FAU Weppner Center for LEAD and Service-Learning}{Boca Raton, FL}
+    \resumeSubheading
+      {FDS of the Year -- Innovation Village Apartments South}{Aug 2024 -- May 2026}
+      {FAU Housing and Residential Education}{Boca Raton, FL}
+  \resumeSubHeadingListEnd
+
+
+\end{document}

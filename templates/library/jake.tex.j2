@@ -1,0 +1,185 @@
+%# jake.tex.j2 — data-driven, Tectonic(XeTeX)-safe adaptation of Jake Gutierrez's resume.
+%# Rendered by src/render.py:  \VAR{ x | tex } = escaped value · %% = block line · \BLOCK{} = inline.
+%# Original pdfLaTeX version kept verbatim in jake.reference.tex.
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{lmodern}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{multicol}
+\setlength{\multicolsep}{-3.0pt}
+\setlength{\columnsep}{-1pt}
+%# NOTE: \input{glyphtounicode} + \pdfgentounicode are pdfTeX-only and intentionally
+%# omitted — Tectonic uses XeTeX and already produces Unicode-clean, ATS-parsable PDFs.
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.6in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1.19in}
+\addtolength{\topmargin}{-.7in}
+\addtolength{\textheight}{1.4in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Section formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large\bfseries
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{1.0\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textbf{\small #2} \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{1.001\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & \textbf{\small #2}\\
+    \end{tabular*}\vspace{-7pt}
+}
+\renewcommand\labelitemi{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.0in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    {\Huge \VAR{ full_name | tex }} \\ \vspace{5pt}
+    \footnotesize \VAR{ contact_line }
+    \vspace{-8pt}
+\end{center}
+
+%----------SUMMARY----------
+%% if profile.summary
+\section{Summary}
+\small{\VAR{ profile.summary | tex }}
+\vspace{-6pt}
+%% endif
+
+%----------EDUCATION----------
+%% if education
+\section{Education}
+  \resumeSubHeadingListStart
+%% for e in education
+    \resumeSubheading
+      {\VAR{ e.school | tex }}{\VAR{ e.date | tex }}
+      {\VAR{ e.degree | tex }\BLOCK{ if e.major } in \VAR{ e.major | tex }\BLOCK{ endif }\BLOCK{ if e.gpa is not none }; GPA: \VAR{ '%.1f'|format(e.gpa) }/4.0\BLOCK{ endif }}{\VAR{ e.location | tex }}
+%% if e.coursework
+      \resumeItemListStart
+        \resumeItem{\textbf{Relevant Coursework:} \VAR{ e.coursework | join(', ') | tex }}
+      \resumeItemListEnd
+%% endif
+%% endfor
+  \resumeSubHeadingListEnd
+%% endif
+
+%----------EXPERIENCE----------
+%% if experience
+\section{Experience}
+  \resumeSubHeadingListStart
+%% for x in experience
+    \resumeSubheading
+      {\VAR{ x.company | tex }}{\VAR{ x.date | tex }}
+      {\VAR{ x.role | tex }}{\VAR{ x.location | tex }}
+%% if x.bullets
+      \resumeItemListStart
+%% for b in x.bullets
+        \resumeItem{\VAR{ b | tex }}
+%% endfor
+      \resumeItemListEnd
+%% endif
+%% endfor
+  \resumeSubHeadingListEnd
+\vspace{-16pt}
+%% endif
+
+%----------PROJECTS----------
+%% if projects
+\section{Projects}
+    \vspace{-5pt}
+    \resumeSubHeadingListStart
+%% for p in projects
+      \resumeProjectHeading
+        {\textbf{\VAR{ p.name | tex }}\BLOCK{ if p.tech_stack } $|$ \emph{\VAR{ p.tech_stack | tex }}\BLOCK{ endif }\BLOCK{ if p.github } $|$ \href{\VAR{ p.github | ensure_scheme }}{\underline{GitHub}}\BLOCK{ endif }\BLOCK{ if p.demo } $|$ \href{\VAR{ p.demo | ensure_scheme }}{\underline{Live Demo}}\BLOCK{ endif }}{\VAR{ p.date | tex }}
+%% if p.bullets
+        \resumeItemListStart
+%% for b in p.bullets
+          \resumeItem{\VAR{ b | tex }}
+%% endfor
+        \resumeItemListEnd
+%% endif
+%% if not loop.last
+        \vspace{-13pt}
+%% endif
+%% endfor
+    \resumeSubHeadingListEnd
+\vspace{-15pt}
+%% endif
+
+%----------TECHNICAL SKILLS----------
+%% if skills
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+%% for s in skills
+     \textbf{\VAR{ s.category | tex }}{: \VAR{ s.skills | join(', ') | tex }} \\
+%% endfor
+    }}
+ \end{itemize}
+ \vspace{-16pt}
+%% endif
+
+%----------CERTIFICATIONS----------
+%% if certifications
+\section{Certifications}
+    \begin{itemize}[leftmargin=0.15in, label={}]
+        \small{\item{
+%% for c in certifications
+            \textbf{\VAR{ c.name | tex }}\BLOCK{ if c.provider } $|$ \textit{\VAR{ c.provider | tex }}\BLOCK{ endif }\BLOCK{ if not loop.last } \\\BLOCK{ endif }
+%% endfor
+        }}
+    \end{itemize}
+%% endif
+
+%----------LEADERSHIP----------
+%% if leadership
+\section{Leadership}
+  \resumeSubHeadingListStart
+%% for l in leadership
+    \resumeSubheading
+      {\VAR{ l.title | tex }}{\VAR{ l.date | tex }}
+      {\VAR{ l.organization | tex }}{\VAR{ l.location | tex }}
+%% endfor
+  \resumeSubHeadingListEnd
+%% endif
+
+\end{document}

@@ -1,0 +1,18 @@
+# secrets
+.env
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# build artifacts
+output/*.pdf
+output/*.tex
+output/*.log
+output/traces/
+data/resume.json
+
+# os
+.DS_Store
