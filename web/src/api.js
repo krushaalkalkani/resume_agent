@@ -54,21 +54,29 @@ export const previewUrl = (variant = 'master', ts = Date.now()) => {
   return apiPath(path)
 }
 
-async function apiFetch(path, options = {}) {
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+async function apiFetch(path, options = {}, attempt = 0) {
   const headers = await getAuthHeaders()
-  let res
+  const url = apiPath(path)
+  const maxAttempts = API_BASE ? 3 : 1
+
   try {
-    res = await fetch(apiPath(path), {
+    const res = await fetch(url, {
       ...options,
       headers: { ...headers, ...options.headers },
     })
+    return res
   } catch {
+    if (attempt + 1 < maxAttempts) {
+      await sleep(4000 * (attempt + 1))
+      return apiFetch(path, options, attempt + 1)
+    }
     const hint = API_BASE
-      ? `Cannot reach API at ${API_BASE}.`
+      ? `Cannot reach API at ${API_BASE}. On Render free tier the server may be waking up — wait 30s and click Retry. Also check CORS_ORIGINS on Render includes your Vercel URL.`
       : 'Cannot reach API. Start the backend: python3.11 -m uvicorn api:app --reload --port 8000'
     throw new Error(hint)
   }
-  return res
 }
 
 export const getConfig = () => fetch(apiPath('/api/config')).then(asJson)
