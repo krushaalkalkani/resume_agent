@@ -1,5 +1,6 @@
 # secrets
 .env
+web/.env
 
 # python
 __pycache__/
@@ -11,8 +12,12 @@ venv/
 output/*.pdf
 output/*.tex
 output/*.log
+output/*.png
+output/users/
 output/traces/
 data/resume.json
+data/resume-tailored.json
+data/tailored-history.json
 
 # os
 .DS_Store

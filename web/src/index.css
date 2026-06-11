@@ -1,283 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-/* ============================================================================
-   BLUEPRINT / SCHEMATIC design system
-   Cream graph-paper canvas · ink linework · mono annotations · cyan + orange.
-   ========================================================================== */
-
 @theme {
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Syne", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
-
-  /* ink */
-  --color-ink: #16181d;
-  --color-ink-muted: #545a63;
-  --color-ink-faint: #949aa1;
-
-  /* paper / surfaces */
-  --color-paper: #f1ede2;
-  --color-paper-2: #e9e4d6;
-  --color-surface: #f1ede2;
-  --color-surface-raised: #fbf9f3;
-  --color-border: #d7d0bf;
-  --color-border-subtle: #e6e0d0;
-
-  /* accents */
-  --color-accent: #0e7e95;        /* blueprint cyan/teal */
-  --color-accent-hover: #0a6275;
-  --color-accent-soft: #def0f3;
-  --color-accent-glow: #19b6cf;
-  --color-orange: #e3590c;        /* safety orange */
-  --color-orange-soft: #fbe9dd;
-
-  --color-success: #2c7a3d;
-  --color-success-soft: #e6f2e8;
-  --color-warn: #b06a0f;
-  --color-warn-soft: #faefdb;
-  --color-danger: #bf3a2b;
-  --color-danger-soft: #fae9e6;
-
-  /* dark ink surfaces (toolbar, footer title block) — keep "landing-*" names */
-  --color-landing: #14161b;
-  --color-landing-elevated: #1b1e24;
-  --color-landing-card: #1b1e24;
-  --color-landing-border: rgba(255, 255, 255, 0.10);
-  --color-landing-text: #f1ede2;
-  --color-landing-muted: #9aa0a7;
-  --color-landing-faint: #6a7078;
-
-  /* blueprint line tints */
-  --bp-line: rgba(22, 24, 29, 0.09);
-  --bp-line-strong: rgba(22, 24, 29, 0.16);
+  --font-sans: "Inter", system-ui, sans-serif;
+  --color-brand: #0f766e;
+  --color-brand-dark: #0d5c56;
+  --color-brand-light: #ccfbf1;
+  --color-surface: #f8fafc;
+  --color-card: #ffffff;
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --color-border: #e2e8f0;
 }
 
-* {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-html { scroll-behavior: smooth; }
 body {
-  font-family: var(--font-sans);
   margin: 0;
-  background: var(--color-paper);
+  font-family: var(--font-sans);
+  background: var(--color-surface);
   color: var(--color-ink);
-}
-::selection { background: color-mix(in srgb, var(--color-accent) 26%, transparent); }
-
-/* ── Graph-paper grid ─────────────────────────────────── */
-.bp-grid {
-  background-color: var(--color-paper);
-  background-image:
-    linear-gradient(var(--bp-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--bp-line) 1px, transparent 1px),
-    linear-gradient(var(--bp-line-strong) 1px, transparent 1px),
-    linear-gradient(90deg, var(--bp-line-strong) 1px, transparent 1px);
-  background-size: 22px 22px, 22px 22px, 110px 110px, 110px 110px;
-}
-.bp-grid-fade {
-  -webkit-mask-image: radial-gradient(ellipse 100% 90% at 50% 25%, #000 45%, transparent 95%);
-  mask-image: radial-gradient(ellipse 100% 90% at 50% 25%, #000 45%, transparent 95%);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ── Mono labels / tags ───────────────────────────────── */
-.bp-label {
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 10px;
-  color: var(--color-ink-faint);
-}
-.bp-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 11px;
-  color: var(--color-ink-muted);
-  border: 1px solid var(--color-ink);
-  background: var(--color-surface-raised);
-  padding: 0.35rem 0.7rem;
+input, textarea, select, button {
+  font: inherit;
 }
 
-/* ── Display ──────────────────────────────────────────── */
-.font-display { font-family: var(--font-display); }
-.bp-accent-cyan { color: var(--color-accent); }
-.bp-accent-orange { color: var(--color-orange); }
-
-/* ── Panels (sharp-corner cards) ──────────────────────── */
-.bp-panel {
-  position: relative;
-  background: var(--color-surface-raised);
-  border: 1px solid var(--color-ink);
-}
-.bp-panel-hover { transition: transform 0.2s, box-shadow 0.2s; }
-.bp-panel-hover:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0 0 var(--color-ink);
+/* subtle page backdrop */
+.app-bg {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(15, 118, 110, 0.12), transparent),
+    var(--color-surface);
 }
 
-/* ── Buttons ──────────────────────────────────────────── */
-.bp-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.55rem;
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-size: 12px;
-  font-weight: 600;
-  border: 1px solid var(--color-ink);
-  transition: all 0.16s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-}
-.bp-btn-lg { padding: 0.95rem 1.6rem; }
-.bp-btn-md { padding: 0.65rem 1.1rem; }
-.bp-btn-primary { background: var(--color-ink); color: var(--color-paper); }
-.bp-btn-primary:hover { box-shadow: 4px 4px 0 0 var(--color-accent); transform: translate(-2px, -2px); }
-.bp-btn-ghost { background: transparent; color: var(--color-ink); }
-.bp-btn-ghost:hover { box-shadow: 4px 4px 0 0 var(--color-ink); transform: translate(-2px, -2px); }
-
-/* ── Dimension line (annotation) ──────────────────────── */
-.bp-dim {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  color: var(--color-accent);
-  text-transform: uppercase;
-}
-.bp-dim::before, .bp-dim::after {
-  content: "";
-  height: 7px;
-  width: 1px;
-  background: var(--color-accent);
-}
-.bp-dim > .line { height: 1px; flex: 1; background: var(--color-accent); min-width: 20px; }
-
-/* ── Engineering title block ──────────────────────────── */
-.bp-titleblock { border: 1px solid currentColor; }
-.bp-titleblock > div { border-top: 1px solid currentColor; }
-.bp-titleblock > div:first-child { border-top: 0; }
-
-/* ── Schematic wires + packets ────────────────────────── */
-.bp-wire { stroke: var(--color-ink); stroke-width: 1.5; fill: none; opacity: 0.55; }
-.bp-wire-flow {
-  stroke: var(--color-accent);
-  stroke-width: 1.5;
-  fill: none;
-  stroke-dasharray: 4 7;
-  animation: bp-flow 1.1s linear infinite;
-}
-@keyframes bp-flow { to { stroke-dashoffset: -22; } }
-@keyframes bp-pulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
-.bp-pulse { animation: bp-pulse 2.2s ease-in-out infinite; }
-
-/* ── Entrance animations ──────────────────────────────── */
-@keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-.animate-fade-up { animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.animate-fade-up-delay-1 { animation-delay: 0.08s; }
-.animate-fade-up-delay-2 { animation-delay: 0.16s; }
-.animate-fade-up-delay-3 { animation-delay: 0.26s; }
-.animate-fade-up-delay-4 { animation-delay: 0.38s; }
-
-/* ── Workspace toolbar buttons (dark ink context) ─────── */
-.btn-workspace {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-family: var(--font-mono);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 11px;
-  border: 1px solid transparent;
-  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.btn-workspace-ghost {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--color-landing-muted);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-.btn-workspace-ghost:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.09);
-  color: var(--color-landing-text);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-.btn-workspace-primary {
-  background: var(--color-accent);
-  color: #fff;
-  border-color: var(--color-accent);
-}
-.btn-workspace-primary:hover:not(:disabled) {
-  background: var(--color-accent-glow);
-  border-color: var(--color-accent-glow);
-}
-.btn-workspace-sm { padding: 0.45rem 0.85rem; }
-.btn-workspace-md { padding: 0.55rem 1rem; }
-.btn-workspace:disabled { opacity: 0.45; cursor: not-allowed; }
-
-/* ── Editor scrollbar ─────────────────────────────────── */
-.editor-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
-.editor-scroll::-webkit-scrollbar-track { background: transparent; }
-.editor-scroll::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 0; }
-
-/* ── Resume live preview (editor workspace) ───────────── */
-.preview-stage {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-}
-.preview-frame {
-  position: relative;
-  width: 100%;
-  max-width: 100%;
+.card {
+  background: var(--color-card);
   border: 1px solid var(--color-border);
-  background: #fff;
-  box-shadow:
-    0 18px 42px rgba(22, 24, 29, 0.14),
-    0 4px 12px rgba(22, 24, 29, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
-.preview-frame:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 24px 52px rgba(22, 24, 29, 0.18),
-    0 8px 18px rgba(22, 24, 29, 0.1);
-}
-.preview-image {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-.preview-zoom-hint {
-  position: absolute;
-  right: 0.85rem;
-  bottom: 0.85rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.45rem 0.7rem;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-ink);
-  background: rgba(251, 249, 243, 0.94);
+
+.card-elevated {
+  background: var(--color-card);
   border: 1px solid var(--color-border);
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 0.18s ease, transform 0.18s ease;
-  pointer-events: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
 }
-.preview-frame:hover .preview-zoom-hint {
-  opacity: 1;
-  transform: translateY(0);
+
+.input {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input:focus {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+}
+
+.preview-img {
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.12);
 }

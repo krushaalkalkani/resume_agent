@@ -1,0 +1,25 @@
+# Render Blueprint — deploy backend API (Docker).
+# Frontend: deploy web/ separately on Vercel (see web/vercel.json).
+#
+# Dashboard: https://dashboard.render.com/blueprints
+
+services:
+  - type: web
+    name: resume-agent-api
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: NOTION_TOKEN
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+        # Example: https://your-app.vercel.app

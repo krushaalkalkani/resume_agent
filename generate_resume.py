@@ -72,7 +72,19 @@ def main() -> int:
     print(f"   data: {resume.section_summary()}")
 
     if args.job:
-        print("⚠  --job tailoring is Phase 3 and not implemented yet. Rendering master resume.")
+        from src.tailor import can_tailor, tailor_resume
+
+        if not can_tailor():
+            print("✗ --job requires ANTHROPIC_API_KEY in .env")
+            return 1
+        jd = Path(args.job).read_text()
+        print(f"→ Tailoring resume to job description ({len(jd)} chars) …")
+        result = tailor_resume(resume, jd, config["models"]["tailor"])
+        resume = result.resume
+        tailored_path = ROOT / "data" / "resume-tailored.json"
+        tailored_path.write_text(resume.model_dump_json(indent=2))
+        print(f"   focus: {result.summary.job_focus}")
+        print(f"   notes: {result.summary.notes}")
 
     # 2) render
     tex = render_resume(resume, ROOT / "templates", config["render"]["template"])
