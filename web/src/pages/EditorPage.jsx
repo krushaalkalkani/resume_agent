@@ -4,7 +4,7 @@ import { Plus, Download, Sparkles, RefreshCw } from 'lucide-react'
 import Layout, { Alert, Badge, Btn, Panel, Spinner } from '../Layout'
 import OnboardingPanel from '../components/OnboardingPanel'
 import { useAuth } from '../context/AuthContext'
-import { getResume, generate, fetchNotion, saveResume, pdfUrl, previewUrl } from '../api'
+import { getResume, generate, fetchNotion, saveResume, pdfUrl, previewUrl, warmApi } from '../api'
 import { resumePdfFilename } from '../pdfFilename'
 import { isResumeEmpty } from '../lib/resumeUtils'
 
@@ -84,7 +84,8 @@ export default function EditorPage() {
     setLoading(true)
     setError(null)
 
-    getResume()
+    warmApi()
+      .then(() => getResume())
       .then((data) => { if (!cancelled) setResume(data) })
       .catch((e) => { if (!cancelled) setError(e.message) })
       .finally(() => { if (!cancelled) setLoading(false) })
@@ -140,7 +141,12 @@ export default function EditorPage() {
   }
 
   if (loading) {
-    return <div className="app-bg flex min-h-screen items-center justify-center"><Spinner /></div>
+    return (
+      <div className="app-bg flex min-h-screen flex-col items-center justify-center gap-2">
+        <Spinner />
+        <p className="text-sm text-[var(--color-muted)]">Connecting to API…</p>
+      </div>
+    )
   }
 
   if (!resume) {
