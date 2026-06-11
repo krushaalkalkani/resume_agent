@@ -117,7 +117,10 @@ def app_config() -> dict:
 
 @app.get("/api/resume")
 def get_resume(user_id: str = Depends(get_current_user_id)) -> dict:
-    return REPO.get_master(user_id).model_dump()
+    try:
+        return REPO.get_master(user_id).model_dump()
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(status_code=500, detail=f"Could not load resume: {exc}") from exc
 
 
 @app.post("/api/resume")

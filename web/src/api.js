@@ -5,17 +5,25 @@ import { supabase } from './lib/supabase'
 
 const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
 
+/** Synced from AuthContext so API calls use the same session as the UI. */
+let activeSession = null
+
+export function setApiSession(session) {
+  activeSession = session
+}
+
 function apiPath(path) {
   return `${API_BASE}${path}`
 }
 
 async function getAuthHeaders() {
   const headers = { 'Content-Type': 'application/json' }
-  if (supabase) {
+  let token = activeSession?.access_token
+  if (!token && supabase) {
     const { data } = await supabase.auth.getSession()
-    const token = data.session?.access_token
-    if (token) headers.Authorization = `Bearer ${token}`
+    token = data.session?.access_token
   }
+  if (token) headers.Authorization = `Bearer ${token}`
   return headers
 }
 
@@ -48,10 +56,19 @@ export const previewUrl = (variant = 'master', ts = Date.now()) => {
 
 async function apiFetch(path, options = {}) {
   const headers = await getAuthHeaders()
-  return fetch(apiPath(path), {
-    ...options,
-    headers: { ...headers, ...options.headers },
-  })
+  let res
+  try {
+    res = await fetch(apiPath(path), {
+      ...options,
+      headers: { ...headers, ...options.headers },
+    })
+  } catch {
+    const hint = API_BASE
+      ? `Cannot reach API at ${API_BASE}.`
+      : 'Cannot reach API. Start the backend: python3.11 -m uvicorn api:app --reload --port 8000'
+    throw new Error(hint)
+  }
+  return res
 }
 
 export const getConfig = () => fetch(apiPath('/api/config')).then(asJson)

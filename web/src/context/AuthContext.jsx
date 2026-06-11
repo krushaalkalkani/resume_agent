@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
+import { setApiSession } from '../api'
 import { supabase, supabaseEnabled } from '../lib/supabase'
 
 const AuthContext = createContext(null)
@@ -12,23 +13,37 @@ export function AuthProvider({ children }) {
 
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session)
+      setApiSession(data.session)
       setLoading(false)
     })
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
       setSession(next)
+      setApiSession(next)
     })
     return () => sub.subscription.unsubscribe()
   }, [])
 
+  useEffect(() => {
+    setApiSession(session)
+  }, [session])
+
   async function signIn(email, password) {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw new Error(error.message)
+    if (data.session) {
+      setSession(data.session)
+      setApiSession(data.session)
+    }
   }
 
   async function signUp(email, password) {
-    const { error } = await supabase.auth.signUp({ email, password })
+    const { data, error } = await supabase.auth.signUp({ email, password })
     if (error) throw new Error(error.message)
+    if (data.session) {
+      setSession(data.session)
+      setApiSession(data.session)
+    }
   }
 
   async function signOut() {

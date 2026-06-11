@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Plus, Download, Sparkles, RefreshCw } from 'lucide-react'
 import Layout, { Alert, Badge, Btn, Panel, Spinner } from '../Layout'
 import OnboardingPanel from '../components/OnboardingPanel'
+import { useAuth } from '../context/AuthContext'
 import { getResume, generate, fetchNotion, saveResume, pdfUrl, previewUrl } from '../api'
 import { resumePdfFilename } from '../pdfFilename'
 import { isResumeEmpty } from '../lib/resumeUtils'
@@ -64,6 +65,7 @@ function Field({ label, value, onChange, type = 'text', rows }) {
 }
 
 export default function EditorPage() {
+  const { session, supabaseEnabled } = useAuth()
   const [resume, setResume] = useState(null)
   const [active, setActive] = useState('profile')
   const [loading, setLoading] = useState(true)
@@ -76,8 +78,19 @@ export default function EditorPage() {
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    getResume().then(setResume).catch((e) => setError(e.message)).finally(() => setLoading(false))
-  }, [])
+    if (supabaseEnabled && !session) return
+
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+
+    getResume()
+      .then((data) => { if (!cancelled) setResume(data) })
+      .catch((e) => { if (!cancelled) setError(e.message) })
+      .finally(() => { if (!cancelled) setLoading(false) })
+
+    return () => { cancelled = true }
+  }, [session, supabaseEnabled])
 
   const updateProfile = (f, v) => setResume((r) => ({ ...r, profile: { ...r.profile, [f]: v } }))
   const setList = (k, items) => setResume((r) => ({ ...r, [k]: items }))
@@ -132,9 +145,21 @@ export default function EditorPage() {
 
   if (!resume) {
     return (
-      <div className="app-bg flex min-h-screen flex-col items-center justify-center gap-3 p-4">
-        <Alert>Could not load resume. Is the API running on port 8000?</Alert>
-        <Link to="/" className="text-sm text-[var(--color-brand)] hover:underline">Home</Link>
+      <div className="app-bg flex min-h-screen flex-col items-center justify-center gap-3 p-4 text-center">
+        <Alert>
+          {error || 'Could not load resume. Make sure the API is running on port 8000.'}
+        </Alert>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="text-sm text-[var(--color-brand)] hover:underline"
+          >
+            Retry
+          </button>
+          <Link to="/login" className="text-sm text-[var(--color-brand)] hover:underline">Sign in again</Link>
+          <Link to="/" className="text-sm text-[var(--color-muted)] hover:underline">Home</Link>
+        </div>
       </div>
     )
   }
