@@ -1,15 +1,19 @@
 FROM python:3.11-bookworm
 
 # poppler-utils -> pdfinfo/pdftotext/pdftoppm; tectonic -> LaTeX engine.
-# The tectonic installer drops the binary in the CURRENT directory, so we
-# explicitly move it onto PATH (/usr/local/bin) — otherwise `tectonic` is not
-# found at runtime and PDF generation fails with an opaque 500.
+# Install a pinned tectonic release binary straight into /usr/local/bin so it
+# is unambiguously on PATH. (The upstream `curl | sh` installer drops the
+# binary in the build's CURRENT directory — which was '/' before WORKDIR and
+# NOT on PATH — so `tectonic` was never found at runtime and PDF generation
+# failed with an opaque 500.)
+ARG TECTONIC_VERSION=0.16.9
 RUN apt-get update && apt-get install -y --no-install-recommends \
     poppler-utils \
     curl \
     ca-certificates \
-  && curl --proto '=https' --tlsv1.2 -fsSL https://drop-sh.fullyjustified.net | sh -s -- -y \
-  && mv ./tectonic /usr/local/bin/tectonic \
+  && curl --proto '=https' --tlsv1.2 -fsSL \
+       "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%40${TECTONIC_VERSION}/tectonic-${TECTONIC_VERSION}-x86_64-unknown-linux-gnu.tar.gz" \
+       | tar -xz -C /usr/local/bin tectonic \
   && tectonic --version \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
