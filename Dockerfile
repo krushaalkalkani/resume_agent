@@ -27,7 +27,7 @@ RUN printf '%s\n' \
     '\usepackage{verbatim}\usepackage{enumitem}\usepackage[hidelinks]{hyperref}' \
     '\usepackage{fancyhdr}\usepackage[english]{babel}\usepackage{tabularx}\usepackage{multicol}' \
     '\begin{document}Prewarm\end{document}' > /tmp/prewarm.tex \
-  && tectonic /tmp/prewarm.tex --outdir /tmp \
+  && (tectonic /tmp/prewarm.tex --outdir /tmp || echo "prewarm skipped (non-fatal)") \
   && rm -f /tmp/prewarm.*
 
 WORKDIR /app
