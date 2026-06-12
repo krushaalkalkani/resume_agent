@@ -105,7 +105,7 @@ export default function EditorPage() {
       const data = await generate(cleanResume(resume))
       setReport(data)
       if (data.ok) setPreviewTs(Date.now())
-      else setError('PDF compilation failed.')
+      else setError(data.log ? `PDF compilation failed: ${data.log}` : 'PDF compilation failed.')
     } catch (e) { setError(e.message) } finally { setGenerating(false) }
   }
 

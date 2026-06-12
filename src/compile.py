@@ -30,7 +30,13 @@ def _require(tool: str) -> None:
 
 def compile_tex(tex_path: Path, out_dir: Path) -> CompileResult:
     """Compile a .tex file to PDF with Tectonic. Returns (ok, pdf_path, log)."""
-    _require("tectonic")
+    if shutil.which("tectonic") is None:
+        return CompileResult(
+            ok=False,
+            pdf_path=None,
+            log="LaTeX engine 'tectonic' is not available on the server. "
+            "PDF generation is temporarily unavailable.",
+        )
     out_dir.mkdir(parents=True, exist_ok=True)
     proc = subprocess.run(
         ["tectonic", str(tex_path), "--outdir", str(out_dir), "--keep-logs"],
