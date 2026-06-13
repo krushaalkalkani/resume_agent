@@ -6,13 +6,17 @@ FROM python:3.11-bookworm
 # binary in the build's CURRENT directory — which was '/' before WORKDIR and
 # NOT on PATH — so `tectonic` was never found at runtime and PDF generation
 # failed with an opaque 500.)
+#
+# Use the musl (statically linked) build, not gnu: the gnu binary needs
+# GLIBC 2.38/2.39 but this image (Debian 12 bookworm) ships glibc 2.36, so a
+# gnu binary aborts at runtime with "GLIBC_2.38 not found".
 ARG TECTONIC_VERSION=0.16.9
 RUN apt-get update && apt-get install -y --no-install-recommends \
     poppler-utils \
     curl \
     ca-certificates \
   && curl --proto '=https' --tlsv1.2 -fsSL \
-       "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%40${TECTONIC_VERSION}/tectonic-${TECTONIC_VERSION}-x86_64-unknown-linux-gnu.tar.gz" \
+       "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%40${TECTONIC_VERSION}/tectonic-${TECTONIC_VERSION}-x86_64-unknown-linux-musl.tar.gz" \
        | tar -xz -C /usr/local/bin tectonic \
   && tectonic --version \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
