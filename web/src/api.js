@@ -140,19 +140,16 @@ export const generate = (resume) =>
     body: JSON.stringify(resume),
   }).then(asJson)
 
-export const fetchNotion = () =>
-  apiFetch('/api/fetch-notion', { method: 'POST' }).then(asJson)
-
 export const saveResume = (resume) =>
   apiFetch('/api/resume', {
     method: 'POST',
     body: JSON.stringify(resume),
   }).then(asJson)
 
-export const tailorToJob = ({ job_description, generate_pdf = true, refresh_from_notion = false }) =>
+export const tailorToJob = ({ job_description, generate_pdf = true }) =>
   apiFetch('/api/tailor', {
     method: 'POST',
-    body: JSON.stringify({ job_description, generate_pdf, refresh_from_notion }),
+    body: JSON.stringify({ job_description, generate_pdf }),
   }).then(asJson)
 
 export const listTailored = () => apiFetch('/api/tailored').then(asJson)

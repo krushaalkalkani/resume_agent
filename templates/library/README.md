@@ -1,8 +1,8 @@
 # Template library
 
 Your collection of resume LaTeX templates. Each template is **data-driven** —
-it's filled from `data/resume.json` (which comes from Notion) and compiled to PDF
-by the pipeline. Drop new ones here and switch between them in `config.yaml`.
+it's filled from `data/resume.json` and compiled to PDF by the pipeline. Drop
+new ones here and switch between them in `config.yaml`.
 
 ## Files
 

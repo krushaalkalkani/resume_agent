@@ -9,14 +9,14 @@ import GenerativeBg from '../components/GenerativeBg'
 import { MarketingNav, MarketingFooter, SectionHead } from '../components/Marketing'
 
 const STEPS = [
-  { n: '01', icon: AlignLeft, title: 'Fetch', desc: 'Reads your 7 Notion databases — the single source of truth for your career.' },
+  { n: '01', icon: AlignLeft, title: 'Edit', desc: 'Starts from structured resume data in the editor or a JSON upload.' },
   { n: '02', icon: Plus, title: 'Render', desc: 'Validates against a strict schema, then renders LaTeX and compiles a real PDF.' },
   { n: '03 · the moat', icon: Eye, title: 'Reflect', desc: 'Reads its own PDF back — counts pages, confirms every entry made it onto the page.', key: true, tag: 'self-critique loop' },
   { n: '04', icon: Sparkles, title: 'Tailor', desc: 'Paste any job description — it reorders and rewrites to match the role.' },
 ]
 
 const FEATURES = [
-  { w: 2, icon: LayoutGrid, title: 'One source of truth, infinite resumes', desc: 'Your data lives in Notion. Edit once — every tailored version stays in sync. No more nine slightly-different Word files.', doc: true },
+  { w: 2, icon: LayoutGrid, title: 'One source of truth, infinite resumes', desc: 'Your master resume lives in the app as structured data. Edit once, then generate and tailor clean versions without juggling Word files.', doc: true },
   { w: 1, icon: ShieldCheck, title: 'ATS-safe by design', desc: 'Clean LaTeX output that parses perfectly through every applicant tracking system.' },
   { w: 1, icon: RefreshCw, title: 'Self-healing compiles', desc: 'LaTeX error? The agent reads the log, fixes it, and recompiles — untouched by you.' },
   { w: 2, icon: BarChart3, title: 'Tailoring with a memory', desc: 'Every tailored run is saved and re-runnable. Compare versions, regenerate, and download the exact PDF you sent to each company.' },
@@ -59,14 +59,14 @@ export default function HomePage() {
           style={{ inset: '-80px -220px auto -220px', height: 620, width: 'calc(100% + 440px)' }}
         />
         <div className="relative z-10">
-          <span className="pill"><span className="pill-dot" /> Notion → AI → PDF · it checks its own work</span>
+          <span className="pill"><span className="pill-dot" /> Data → AI → PDF · it checks its own work</span>
           <h1 className="mt-5 text-[clamp(40px,5.4vw,68px)] font-semibold leading-[1.02] text-[var(--color-ink)]">
             The resume that<br />
             <span className="grad-text">builds and proofreads</span><br />
             itself.
           </h1>
           <p className="mt-5 max-w-[30em] text-[18px] leading-relaxed text-[var(--color-muted)]">
-            Pull your career data straight from Notion. The agent renders a flawless one-page PDF, then{' '}
+            Edit your resume once as structured data. The agent renders a flawless one-page PDF, then{' '}
             <span className="text-[var(--color-ink)]">reads it back to verify every line landed</span> — and re-tailors it to any job in seconds.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -79,7 +79,7 @@ export default function HomePage() {
           </div>
           <div className="mt-10 flex flex-wrap gap-8 text-[13px] text-[var(--color-faint)]">
             <div><b className="block font-display text-[20px] font-semibold text-[var(--color-ink)]">1-page</b>ATS-safe, always</div>
-            <div><b className="block font-display text-[20px] font-semibold text-[var(--color-ink)]">~12s</b>Notion to PDF</div>
+            <div><b className="block font-display text-[20px] font-semibold text-[var(--color-ink)]">~12s</b>Data to PDF</div>
             <div><b className="block font-display text-[20px] font-semibold text-[var(--color-ink)]">Self-healing</b>compile loop</div>
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function HomePage() {
 
       {/* ---------- logos ---------- */}
       <div className="reveal mx-auto flex w-full max-w-6xl flex-wrap items-center justify-center gap-x-12 gap-y-4 px-6 py-6 font-display text-[17px] font-medium text-[var(--color-muted)] opacity-60">
-        {['Y Combinator', 'Sequoia', 'a16z', 'Notion', 'Vercel'].map((n) => <span key={n}>{n}</span>)}
+        {['Y Combinator', 'Sequoia', 'a16z', 'Vercel'].map((n) => <span key={n}>{n}</span>)}
       </div>
 
       {/* ---------- agent loop ---------- */}
@@ -224,7 +224,7 @@ export default function HomePage() {
             <div className="font-display text-[15px] text-[var(--color-muted)]">Free</div>
             <div className="mt-2.5 font-display text-[42px] font-semibold tracking-tight text-[var(--color-ink)]">$0<small className="text-[15px] font-normal text-[var(--color-faint)]"> / forever</small></div>
             <ul className="my-6 grid gap-3">
-              {['Notion → PDF generation', 'Self-checking reflection loop', '3 tailored versions / month'].map((t) => (
+              {['JSON → PDF generation', 'Self-checking reflection loop', '3 tailored versions / month'].map((t) => (
                 <li key={t} className="flex items-center gap-2.5 text-[14px] text-[var(--color-muted)]">
                   <Check className="h-4 w-4 flex-none text-[var(--color-brand)]" strokeWidth={2.6} />{t}
                 </li>

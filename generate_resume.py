@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """Resume agent CLI.
 
-Pipeline:  Notion (or JSON) -> validate -> render LaTeX -> compile PDF -> reflect.
+Pipeline: structured JSON -> validate -> render LaTeX -> compile PDF -> reflect.
 
 Usage:
-    python generate_resume.py                      # fetch from Notion -> PDF
-    python generate_resume.py --from-json data/resume.json   # skip Notion
-    python generate_resume.py --no-reflect         # skip the auto-fix loop
-    python generate_resume.py --job job.txt        # (Phase 3) tailor to a job — TODO
+    python generate_resume.py
+    python generate_resume.py --from-json data/resume.json
+    python generate_resume.py --no-reflect
+    python generate_resume.py --job job.txt
 
-Outputs land in output/ (resume.tex, resume.pdf) and the fetched data is saved to
-data/resume.json so you can inspect / hand-edit it.
+Outputs land in output/ (resume.tex, resume.pdf). The resume data is read from
+data/resume.json by default so it can be edited by hand or through the web UI.
 """
 
 from __future__ import annotations
@@ -40,20 +40,19 @@ def load_config() -> dict:
 
 
 def get_resume(args, config) -> Resume:
-    if args.from_json:
-        data = json.loads(Path(args.from_json).read_text())
-        return Resume.model_validate(data)
-    # default: live Notion fetch
-    from src.fetch_notion import fetch_resume
-
-    print("→ Fetching resume data from Notion …")
-    return fetch_resume(config)
+    source = Path(args.from_json) if args.from_json else ROOT / "data" / "resume.json"
+    if not source.exists():
+        raise FileNotFoundError(
+            f"Resume data not found: {source}. Create it in the web editor or pass --from-json."
+        )
+    data = json.loads(source.read_text())
+    return Resume.model_validate(data)
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate a LaTeX/PDF resume from Notion.")
-    parser.add_argument("--from-json", help="Load resume data from a JSON file instead of Notion.")
-    parser.add_argument("--job", help="(Phase 3) Path to a job description to tailor to.")
+    parser = argparse.ArgumentParser(description="Generate a LaTeX/PDF resume from structured JSON.")
+    parser.add_argument("--from-json", help="Load resume data from a JSON file.")
+    parser.add_argument("--job", help="Path to a job description to tailor to.")
     parser.add_argument("--no-reflect", action="store_true", help="Skip the LLM auto-fix loop.")
     parser.add_argument("--out", help="Output directory (default: output/).")
     args = parser.parse_args()

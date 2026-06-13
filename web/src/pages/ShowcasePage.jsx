@@ -49,7 +49,7 @@ export default function ShowcasePage() {
           One dataset.<br /><span className="grad-text">Every role, perfectly fit.</span>
         </h1>
         <p className="mx-auto mt-5 max-w-[34em] text-[18px] leading-relaxed text-[var(--color-muted)]">
-          The same Notion data, tailored and recompiled for six very different jobs — each one verified to a single page.
+          The same master resume data, tailored and recompiled for six very different jobs — each one verified to a single page.
         </p>
       </header>
 

@@ -1,1 +1,1 @@
-"""Resume agent: Notion -> structured data -> LaTeX -> PDF, with a reflection loop."""
+"""Resume agent: structured data -> LaTeX -> PDF, with a reflection loop."""

@@ -1,8 +1,8 @@
 """Pydantic data contract for the resume.
 
-This is the single source of truth that both the Notion fetcher (input) and the
-LaTeX renderer (output) agree on. Validating here means a malformed Notion row
-fails loudly *before* we try to compile a broken PDF.
+This is the single source of truth that the editor, API, tailoring step, and
+LaTeX renderer agree on. Validating here means malformed resume data fails
+loudly *before* we try to compile a broken PDF.
 """
 
 from __future__ import annotations

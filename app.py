@@ -1,8 +1,8 @@
 """Streamlit UI for the resume agent.
 
 A thin front-end over the existing pipeline (src/render, src/compile, src/reflect):
-load data from Notion or the saved JSON, edit it, click Generate, and preview /
-download the compiled PDF along with the reflection report.
+load the saved JSON, edit it, click Generate, and preview / download the
+compiled PDF along with the reflection report.
 
 Run:  streamlit run app.py     (or via .claude/launch.json -> preview_start)
 """
@@ -44,21 +44,14 @@ def load_config() -> dict:
 config = load_config()
 
 st.title("📄 Resume Agent")
-st.caption("Notion → structured data → LaTeX → PDF, with a self-check reflection step.")
+st.caption("Structured data → LaTeX → PDF, with a self-check reflection step.")
 
 # ---- Sidebar: data source ------------------------------------------------- #
 st.sidebar.header("Data source")
-source = st.sidebar.radio(
-    "Load resume data from",
-    ["Saved JSON (data/resume.json)", "Fetch live from Notion"],
-)
+st.sidebar.caption("Loaded from data/resume.json")
 
 
 def load_resume_dict() -> dict:
-    if source.startswith("Fetch"):
-        from src.fetch_notion import fetch_resume
-
-        return fetch_resume(config).model_dump()
     return json.loads(DATA.read_text())
 
 

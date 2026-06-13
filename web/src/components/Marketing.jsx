@@ -85,7 +85,7 @@ export function MarketingFooter() {
           <Link to="/showcase" className="transition hover:text-[var(--color-muted)]">Showcase</Link>
           <Link to="/pricing" className="transition hover:text-[var(--color-muted)]">Pricing</Link>
         </div>
-        <div>© {new Date().getFullYear()} Resume Agent · Notion · Tectonic · Claude</div>
+        <div>© {new Date().getFullYear()} Resume Agent · Tectonic · Claude</div>
       </div>
     </footer>
   )

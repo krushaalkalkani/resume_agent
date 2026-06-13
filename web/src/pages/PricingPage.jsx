@@ -7,7 +7,7 @@ const PLANS = [
   {
     name: 'Free', price: '$0', unit: '/ forever',
     blurb: 'Everything you need to build one great resume.',
-    features: ['Notion → PDF generation', 'Self-checking reflection loop', 'Self-healing LaTeX compiles', '3 tailored versions / month', 'JSON import & export'],
+    features: ['JSON → PDF generation', 'Self-checking reflection loop', 'Self-healing LaTeX compiles', '3 tailored versions / month', 'JSON import & export'],
     cta: 'Get started', variant: 'line',
   },
   {
@@ -19,10 +19,10 @@ const PLANS = [
 ]
 
 const FAQ = [
-  { q: 'Do I need to know LaTeX?', a: 'No. You edit structured fields in Notion or the in-app editor — the agent writes and compiles the LaTeX for you.' },
+  { q: 'Do I need to know LaTeX?', a: 'No. You edit structured fields in the app — the agent writes and compiles the LaTeX for you.' },
   { q: 'Is the output really ATS-safe?', a: 'Yes. The template renders clean, single-column text that applicant tracking systems parse reliably.' },
   { q: 'Can I cancel anytime?', a: 'Pro is month-to-month with no contract. Cancel whenever and you keep Free forever.' },
-  { q: 'Where does my data live?', a: 'Your career data stays in your own Notion workspace and your private account — it is never shared.' },
+  { q: 'Where does my data live?', a: 'Your career data stays in your private account or local JSON file — it is never shared.' },
 ]
 
 export default function PricingPage() {

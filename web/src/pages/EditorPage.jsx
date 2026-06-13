@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Download, Sparkles, RefreshCw, ChevronUp, ChevronDown } from 'lucide-react'
+import { Plus, Download, Sparkles, ChevronUp, ChevronDown } from 'lucide-react'
 import Layout, { Alert, Badge, Btn, Panel, Spinner } from '../Layout'
 import OnboardingPanel from '../components/OnboardingPanel'
 import { useAuth } from '../context/AuthContext'
-import { getResume, generate, fetchNotion, saveResume, warmApi } from '../api'
+import { getResume, generate, saveResume, warmApi } from '../api'
 import { resumePdfFilename } from '../pdfFilename'
 import { isResumeEmpty } from '../lib/resumeUtils'
 import { useResumeArtifacts } from '../lib/useResumeArtifacts'
@@ -71,7 +71,6 @@ export default function EditorPage() {
   const [active, setActive] = useState('profile')
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
-  const [busyNotion, setBusyNotion] = useState(false)
   const [report, setReport] = useState(null)
   const { previewSrc, pdfHref, load: loadArtifacts } = useResumeArtifacts()
   const [error, setError] = useState(null)
@@ -115,12 +114,6 @@ export default function EditorPage() {
       if (data.ok) await loadArtifacts('master')
       else setError(data.log ? `PDF compilation failed: ${data.log}` : 'PDF compilation failed.')
     } catch (e) { setError(e.message) } finally { setGenerating(false) }
-  }
-
-  async function onFetchNotion() {
-    setBusyNotion(true); setError(null)
-    try { setResume(await fetchNotion()) }
-    catch (e) { setError(e.message) } finally { setBusyNotion(false) }
   }
 
   async function onImportJson(data) {
@@ -192,10 +185,6 @@ export default function EditorPage() {
       subtitle="Edit your data, then generate a one-page PDF."
       actions={
         <>
-          <Btn onClick={onFetchNotion} disabled={busyNotion}>
-            {busyNotion ? <Spinner /> : <RefreshCw className="h-4 w-4" />}
-            Notion
-          </Btn>
           <Btn href={hasPDF ? pdfHref : undefined} download={hasPDF ? pdfFilename : undefined} disabled={!hasPDF}>
             <Download className="h-4 w-4" /> PDF
           </Btn>
@@ -214,10 +203,8 @@ export default function EditorPage() {
 
       {isResumeEmpty(resume) && (
         <OnboardingPanel
-          onImportNotion={onFetchNotion}
           onImportJson={onImportJson}
           onError={setError}
-          busyNotion={busyNotion}
         />
       )}
 

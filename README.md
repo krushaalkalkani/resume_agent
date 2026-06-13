@@ -1,130 +1,160 @@
 # Resume Agent
 
-Generate a clean, ATS-friendly **LaTeX → PDF resume** from your structured data in
-**Notion**. The agent fetches your career data, validates it, renders a LaTeX
-template, compiles a PDF with Tectonic, then **reads the PDF back to check itself**
-(page count + that every entry actually made it onto the page).
+Generate a clean, ATS-friendly **LaTeX -> PDF resume** from structured resume
+data. The app validates the data, renders a LaTeX template, compiles a PDF with
+Tectonic, then **reads the PDF back to check itself** for page count and missing
+entries.
 
-> Built with the Agentic AI Builder skill. Patterns used: **tool use** (Notion +
-> LaTeX compiler), **structured output** (Pydantic data contract), and
-> **reflection with external feedback** (compile → read PDF back → critique → fix).
+> Built with the Agentic AI Builder skill. Patterns used: **structured output**
+> (Pydantic data contract), **code execution** (LaTeX compile + PDF parsing), and
+> **reflection with external feedback** (compile -> read PDF back -> critique).
 
 ---
 
 ## Pipeline
 
-```
-Notion (7 source DBs)            <- your single source of truth
-   │  fetch_notion.py  (notion-client)
-   ▼
-data/resume.json                 <- validated against src/schema.py (Pydantic)
-   │  render.py  (Jinja2, LaTeX-safe delimiters)
-   ▼
+```text
+data/resume.json or web editor      <- master resume source
+   |
+   v
+src/schema.py                       <- validates the data contract
+   |
+   v
+templates/*.tex.j2                  <- Jinja2 LaTeX template
+   |
+   v
 output/resume.tex
-   │  compile.py  (Tectonic)              ┌─ compile error? ─► reflect.fix_latex_with_llm ─┐
-   ▼                                      │                                                │
-output/resume.pdf  ◄────────────────────┘   (auto-fix loop, needs ANTHROPIC_API_KEY)  ◄──┘
-   │  reflect.check_layout  (pdfinfo / pdftotext)
-   ▼
-Reflection report: 1 page? all sections present?  PASS / NEEDS ATTENTION
+   |
+   v
+output/resume.pdf                   <- compiled with Tectonic
+   |
+   v
+reflect.check_layout                <- pdfinfo + pdftotext self-check
+
+Reflection report: 1 page? all sections present? PASS / NEEDS ATTENTION
 ```
 
-## Your Notion structure (auto-discovered)
+## Data Model
 
-All under the **Resume Data Base** page; each child page holds one inline database.
-The IDs live in [`config.yaml`](config.yaml):
+The master resume lives as one structured JSON document at `data/resume.json`.
+It is validated by `src/schema.py`.
 
-| Section | Title field | Other fields |
-|---|---|---|
-| Personal Information | `Information` | `Text` (key/value rows → Profile) |
-| Education | `School/Institution Name` | `Degree`, `Major`, `Location`, `Date`, `GPA` |
-| Technical Skills | `Category` | `Skills` (comma list) |
-| Experience | `Organization/Company Name` | `Role`, `Date`, `Location`, `Job Description` |
-| Projects | `Project Name` | `Tech Stack`, `Description`, `Github Link`, `Live Demo Link`, `Date` |
-| Certifications | `Certification Name` | `Provider` |
-| Leadership | `Role/Title` | `Organization`, `Location`, `Date` |
+Sections:
 
-Bullets are read from a row's **page body** (bulleted list) if present, otherwise
-from the `Job Description` / `Description` text field (split on newlines and `<br>`).
+| Section | Purpose |
+|---|---|
+| `profile` | Name, contact links, location, summary |
+| `education` | Schools, degrees, dates, GPA, coursework |
+| `skills` | Skill categories and individual skills |
+| `experience` | Company, role, location, date, bullets |
+| `projects` | Project name, tech stack, links, bullets |
+| `certifications` | Certification name and provider |
+| `leadership` | Leadership roles and organizations |
 
 ---
 
 ## Setup
 
-### 1. Install the toolchain (one time)
+### 1. Install the toolchain
+
 ```bash
-brew install tectonic poppler        # LaTeX engine + pdftotext/pdfinfo
+brew install tectonic poppler
 pip install -r requirements.txt
 ```
 
-### 2. Create a Notion integration & connect it
-1. Go to <https://www.notion.so/my-integrations> → **New integration** (internal).
-2. Copy the **Internal Integration Secret**.
-3. Open your **Resume Data Base** page in Notion → `•••` menu → **Connections** →
-   add your integration. (This shares the page *and all child databases* with it.)
+### 2. Optional environment variables
 
-### 3. Add your secrets
+Create `.env` only for features that need external services:
+
 ```bash
-cp .env.example .env
-# edit .env and paste your NOTION_TOKEN (and ANTHROPIC_API_KEY if you want auto-fix)
+# Claude-powered tailoring and LaTeX auto-fix
+ANTHROPIC_API_KEY=
+
+# Optional production accounts and persistence
+SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
+SUPABASE_JWT_SECRET=
+CORS_ORIGINS=
 ```
+
+The core JSON -> PDF path does not need an API key.
 
 ---
 
 ## Usage
 
 ```bash
-# Fetch live from Notion → resume.pdf
+# Generate output/resume.pdf from data/resume.json
 python generate_resume.py
 
-# Skip Notion and render from a saved JSON (fast iteration on layout)
-python generate_resume.py --from-json data/resume.json
+# Generate from another JSON file
+python generate_resume.py --from-json path/to/resume.json
 
-# Skip the LLM auto-fix loop (pure code path; no API key needed)
+# Skip the LLM auto-fix loop
 python generate_resume.py --no-reflect
+
+# Tailor to a job description, requires ANTHROPIC_API_KEY
+python generate_resume.py --job job.txt
 ```
 
-Outputs land in `output/` (`resume.tex`, `resume.pdf`) and the fetched data is
-saved to `data/resume.json` so you can inspect or hand-edit it.
+Run the API and React app:
+
+```bash
+python3 -m uvicorn api:app --reload --port 8000
+cd web && npm run dev
+```
+
+Run the Streamlit editor:
+
+```bash
+streamlit run app.py
+```
 
 ---
 
-## Project layout
+## Project Layout
 
-```
+```text
 resume_agent/
 ├── generate_resume.py     # CLI orchestrator
-├── config.yaml            # Notion DB ids, model names, page limit
+├── api.py                 # FastAPI backend for the React app
+├── app.py                 # Streamlit local editor
+├── config.yaml            # model names, template, page limit
 ├── src/
-│   ├── schema.py          # Pydantic data contract (the source of truth)
-│   ├── fetch_notion.py    # Notion -> Resume
-│   ├── render.py          # Resume -> .tex  (LaTeX-safe Jinja env + escaping)
+│   ├── schema.py          # Pydantic data contract
+│   ├── render.py          # Resume -> .tex
 │   ├── compile.py         # Tectonic compile + PDF readback
-│   └── reflect.py         # layout checks + LLM LaTeX auto-fix
-├── templates/resume.tex.j2
-├── evals/run_evals.py     # code-based checks over example inputs
-├── data/resume.json       # last fetched data
-└── output/                # resume.tex, resume.pdf
+│   ├── reflect.py         # layout checks + LLM LaTeX auto-fix
+│   ├── tailor.py          # job-description tailoring
+│   └── repository.py      # local JSON or Supabase persistence
+├── templates/
+│   └── library/           # resume templates
+├── evals/                 # code-based checks
+├── data/resume.json       # master resume data
+├── output/                # generated .tex, .pdf, previews
+└── web/                   # Vite + React frontend
 ```
 
 ---
 
 ## Roadmap
 
-- **Phase 1 — Master resume (DONE).** Notion → validated JSON → LaTeX → 1-page PDF
-  with a reflection report.
-- **Phase 2 — Reflection hardening.** Auto-fix LaTeX compile errors via Claude
-  (wired; set `ANTHROPIC_API_KEY`), plus richer layout heuristics.
-- **Phase 3 — Job tailoring (`--job job.txt`).** Given a job description, an LLM
-  selects the most relevant experience/projects, rewrites bullets toward the role,
-  and trims to one page — with a **no-fabrication guardrail** (every claim must
-  trace back to `data/resume.json`). See `src/tailor.py` (TODO).
-- **Phase 4 — Evals.** Grow `evals/run_evals.py`: compiles, single-page, all
-  `include` entries present, no fabricated claims (Phase 3), JD keyword coverage.
+- **Phase 1 - Master resume.** Structured JSON -> validated schema -> LaTeX ->
+  one-page PDF with a reflection report.
+- **Phase 2 - Local/web editing.** Edit the master resume in the app, upload JSON,
+  save changes, and regenerate PDFs.
+- **Phase 3 - Job tailoring.** Given a job description, select the most relevant
+  experience/projects, rewrite bullets toward the role, and trim to one page with
+  a no-fabrication guardrail.
+- **Phase 4 - Evals.** Track compile success, single-page pass rate, all entries
+  present, no fabricated claims, and job-description keyword coverage.
 
-### Nice-to-have enhancements
-- Add an `Order` number + `Include` checkbox to the Experience/Projects DBs for
-  explicit ordering and one-click inclusion control.
-- Add a `coursework` field to Education (your FAU page body already lists it).
-- Write the finished PDF back into the **All Resume** database via the Notion API.
+## Verification
+
+```bash
+python3 -m compileall -q generate_resume.py api.py app.py src evals
+python3 generate_resume.py --from-json data/resume.json --no-reflect
+python3 evals/run_evals.py
+PYTHONPATH=. python3 evals/test_rendering.py
+cd web && npm run build
 ```

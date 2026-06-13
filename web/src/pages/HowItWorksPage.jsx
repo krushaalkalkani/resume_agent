@@ -6,9 +6,9 @@ import { MarketingNav, MarketingFooter, SectionHead } from '../components/Market
 
 const STAGES = [
   {
-    icon: Database, n: '01', title: 'Fetch from Notion',
-    desc: 'Your career lives in seven linked Notion databases — profile, education, experience, projects, skills, certifications, leadership. The agent reads them through the Notion API and assembles one structured record.',
-    code: `fetch_notion.py → data/resume.json`,
+    icon: Database, n: '01', title: 'Load structured resume data',
+    desc: 'Your career data lives in the app as one structured resume record: profile, education, experience, projects, skills, certifications, and leadership. You can edit it in the UI or upload a JSON file.',
+    code: `data/resume.json → schema.py`,
   },
   {
     icon: FileCode2, n: '02', title: 'Validate & render',
@@ -41,7 +41,7 @@ export default function HowItWorksPage() {
             It doesn't just write your resume.<br /><span className="grad-text">It double-checks it.</span>
           </h1>
           <p className="mx-auto mt-5 max-w-[34em] text-[18px] leading-relaxed text-[var(--color-muted)]">
-            Four stages, one closed loop. The agent fetches, renders, then reads its own work back before
+            Four stages, one closed loop. The agent validates, renders, then reads its own work back before
             handing you anything — the same way a careful human would.
           </p>
         </div>

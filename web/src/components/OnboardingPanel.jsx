@@ -1,8 +1,7 @@
 import { useRef } from 'react'
-import { FileUp, PenLine, RefreshCw } from 'lucide-react'
-import { Spinner } from '../Layout'
+import { FileUp, PenLine } from 'lucide-react'
 
-export default function OnboardingPanel({ onImportNotion, onImportJson, onError, busyNotion }) {
+export default function OnboardingPanel({ onImportJson, onError }) {
   const fileRef = useRef(null)
 
   async function onFileChange(e) {
@@ -24,7 +23,7 @@ export default function OnboardingPanel({ onImportNotion, onImportJson, onError,
         Your account is ready. Choose how you want to get started.
       </p>
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-3">
+      <div className="mt-5 grid gap-3 sm:grid-cols-2">
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
@@ -33,17 +32,6 @@ export default function OnboardingPanel({ onImportNotion, onImportJson, onError,
           <FileUp className="h-5 w-5 text-[var(--color-brand)]" />
           <span className="font-medium text-[var(--color-ink)]">Upload JSON</span>
           <span className="text-xs text-[var(--color-muted)]">Import a saved resume file</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={onImportNotion}
-          disabled={busyNotion}
-          className="card flex flex-col items-start gap-2 p-4 text-left transition hover:border-[var(--color-brand)] disabled:opacity-50"
-        >
-          {busyNotion ? <Spinner /> : <RefreshCw className="h-5 w-5 text-[var(--color-brand)]" />}
-          <span className="font-medium text-[var(--color-ink)]">Import from Notion</span>
-          <span className="text-xs text-[var(--color-muted)]">Pull from your connected database</span>
         </button>
 
         <div className="card flex flex-col items-start gap-2 p-4">

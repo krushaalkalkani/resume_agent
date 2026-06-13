@@ -5,7 +5,6 @@ Run:  uvicorn api:app --reload --port 8000
 
 from __future__ import annotations
 
-import json
 import os
 import subprocess
 import sys
@@ -134,25 +133,12 @@ def save_resume(payload: dict = Body(...), user_id: str = Depends(get_current_us
     return {"ok": True}
 
 
-@app.post("/api/fetch-notion")
-def fetch_notion(user_id: str = Depends(get_current_user_id)) -> dict:
-    from src.fetch_notion import fetch_resume
-
-    try:
-        resume = fetch_resume(CONFIG)
-    except Exception as exc:  # noqa: BLE001
-        raise HTTPException(status_code=400, detail=str(exc))
-    REPO.save_master(user_id, resume)
-    return resume.model_dump()
-
-
 @app.post("/api/tailor")
 def tailor_job(payload: dict = Body(...), user_id: str = Depends(get_current_user_id)):
     from src.tailor import can_tailor, tailor_resume
 
     job_description = (payload.get("job_description") or "").strip()
     generate_pdf = bool(payload.get("generate_pdf", True))
-    refresh = bool(payload.get("refresh_from_notion", False))
 
     if not can_tailor():
         raise HTTPException(
@@ -160,21 +146,12 @@ def tailor_job(payload: dict = Body(...), user_id: str = Depends(get_current_use
             detail="ANTHROPIC_API_KEY is not set. Add it to your .env file.",
         )
 
-    if refresh:
-        from src.fetch_notion import fetch_resume
-
-        try:
-            master = fetch_resume(CONFIG)
-        except Exception as exc:  # noqa: BLE001
-            raise HTTPException(status_code=400, detail=str(exc))
-        REPO.save_master(user_id, master)
-    else:
-        master = REPO.get_master(user_id)
-        if not any(master.section_summary().values()):
-            raise HTTPException(
-                status_code=400,
-                detail="No resume data yet. Build one in the editor or import from Notion.",
-            )
+    master = REPO.get_master(user_id)
+    if not any(master.section_summary().values()):
+        raise HTTPException(
+            status_code=400,
+            detail="No resume data yet. Build one in the editor or upload a JSON resume.",
+        )
 
     try:
         result = tailor_resume(master, job_description, CONFIG["models"]["tailor"])
