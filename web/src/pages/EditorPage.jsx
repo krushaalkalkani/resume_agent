@@ -231,13 +231,13 @@ export default function EditorPage() {
                 onClick={() => setActive(s.key)}
                 className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
                   active === s.key
-                    ? 'bg-[var(--color-brand)] text-white shadow-sm'
-                    : 'bg-white text-[var(--color-muted)] border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]'
+                    ? 'bg-[var(--color-brand)] text-[#06080c]'
+                    : 'border border-[var(--color-border)] bg-white/5 text-[var(--color-muted)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]'
                 }`}
               >
                 {s.label}
                 {s.key !== 'profile' && (
-                  <span className={`ml-1.5 text-xs ${active === s.key ? 'text-teal-100' : 'text-slate-400'}`}>
+                  <span className={`ml-1.5 text-xs ${active === s.key ? 'text-[#06080c]/70' : 'text-[var(--color-faint)]'}`}>
                     {count(s.key)}
                   </span>
                 )}
@@ -276,7 +276,7 @@ export default function EditorPage() {
             ) : (
               <div className="space-y-4">
                 {items.map((it, i) => (
-                  <div key={i} className="rounded-lg border border-[var(--color-border)] bg-slate-50/50 p-4">
+                  <div key={i} className="rounded-xl border border-[var(--color-border)] bg-white/[0.03] p-4">
                     <div className="mb-3 flex items-center justify-between border-b border-[var(--color-border)] pb-2">
                       <span className="font-medium text-[var(--color-ink)]">{it[fields[0][0]] || `Entry ${i + 1}`}</span>
                       <div className="flex items-center gap-1">
@@ -286,7 +286,7 @@ export default function EditorPage() {
                           disabled={i === 0}
                           title="Move up"
                           aria-label="Move up"
-                          className="rounded p-1 text-[var(--color-muted)] hover:bg-slate-100 hover:text-[var(--color-brand)] disabled:cursor-not-allowed disabled:opacity-30"
+                          className="rounded p-1 text-[var(--color-muted)] hover:bg-white/5 hover:text-[var(--color-brand)] disabled:cursor-not-allowed disabled:opacity-30"
                         >
                           <ChevronUp className="h-4 w-4" />
                         </button>
@@ -296,11 +296,11 @@ export default function EditorPage() {
                           disabled={i === items.length - 1}
                           title="Move down"
                           aria-label="Move down"
-                          className="rounded p-1 text-[var(--color-muted)] hover:bg-slate-100 hover:text-[var(--color-brand)] disabled:cursor-not-allowed disabled:opacity-30"
+                          className="rounded p-1 text-[var(--color-muted)] hover:bg-white/5 hover:text-[var(--color-brand)] disabled:cursor-not-allowed disabled:opacity-30"
                         >
                           <ChevronDown className="h-4 w-4" />
                         </button>
-                        <button type="button" onClick={() => removeItem(active, i)} className="ml-2 text-xs font-medium text-red-600 hover:underline">
+                        <button type="button" onClick={() => removeItem(active, i)} className="ml-2 text-xs font-medium text-[#e88] hover:underline">
                           Remove
                         </button>
                       </div>
@@ -346,8 +346,8 @@ export default function EditorPage() {
                 <img src={previewSrc} alt="Resume preview" className="preview-img w-full" />
               </a>
             ) : (
-              <div className="flex aspect-[8.5/11] flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-slate-50 text-center">
-                <Sparkles className="mb-2 h-8 w-8 text-slate-300" />
+              <div className="flex aspect-[8.5/11] flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-white/[0.02] text-center">
+                <Sparkles className="mb-2 h-8 w-8 text-[var(--color-faint)]" />
                 <p className="text-sm text-[var(--color-muted)]">Hit <strong>Generate</strong> to preview your PDF</p>
               </div>
             )}

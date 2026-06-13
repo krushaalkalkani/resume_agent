@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Resume Agent — prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#06080c;
+    --bg-2:#0a0e15;
+    --ink:#f3f6fb;
+    --muted:#8b96aa;
+    --faint:#5b6577;
+    --line:rgba(255,255,255,.08);
+    --line-2:rgba(255,255,255,.14);
+    --teal:#2ee6c5;
+    --violet:#7c6cff;
+    --glass:rgba(255,255,255,.035);
+    --display:'Space Grotesk',system-ui,sans-serif;
+    --sans:'Inter',system-ui,sans-serif;
+    --grad:linear-gradient(100deg,var(--teal),var(--violet));
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);-webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:rgba(124,108,255,.4)}
+
+  /* grain + glow backdrop */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(900px 500px at 75% -10%,rgba(124,108,255,.20),transparent 60%),
+      radial-gradient(800px 500px at 10% 10%,rgba(46,230,197,.12),transparent 55%);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.045;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 28px}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+    background:rgba(6,8,12,.55);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:600;letter-spacing:-.01em}
+  .logo{width:32px;height:32px;border-radius:9px;background:var(--grad);display:grid;place-items:center;
+    box-shadow:0 0 24px rgba(124,108,255,.5)}
+  .logo svg{width:16px;height:16px}
+  .nav-links{display:flex;gap:30px;font-size:14.5px;color:var(--muted)}
+  .nav-links a{transition:color .2s}.nav-links a:hover{color:var(--ink)}
+  .nav-cta{display:flex;gap:12px;align-items:center}
+
+  .btn{display:inline-flex;align-items:center;gap:8px;border-radius:11px;font-weight:500;
+    font-size:14.5px;padding:10px 18px;cursor:pointer;border:1px solid transparent;transition:.2s;font-family:var(--sans)}
+  .btn-ghost{color:var(--muted)}.btn-ghost:hover{color:var(--ink)}
+  .btn-line{border-color:var(--line-2);color:var(--ink);background:var(--glass)}
+  .btn-line:hover{border-color:rgba(255,255,255,.3);transform:translateY(-1px)}
+  .btn-grad{background:var(--grad);color:#05070b;font-weight:600;box-shadow:0 8px 30px rgba(124,108,255,.35)}
+  .btn-grad:hover{transform:translateY(-1px);box-shadow:0 12px 40px rgba(124,108,255,.5)}
+
+  /* hero */
+  .hero{position:relative;padding:96px 0 70px;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  #net{position:absolute;inset:-80px -200px auto -200px;height:620px;width:calc(100% + 400px);z-index:0;opacity:.55}
+  .hero > *{position:relative;z-index:1}
+  .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-2);background:var(--glass);
+    border-radius:999px;padding:7px 14px;font-size:13px;color:var(--muted)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 12px var(--teal)}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(40px,5.4vw,68px);line-height:1.02;
+    letter-spacing:-.025em;margin:22px 0 0}
+  h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:18px;line-height:1.6;max-width:30em;margin:22px 0 0}
+  .hero-cta{display:flex;gap:13px;margin-top:34px;flex-wrap:wrap}
+  .metarow{display:flex;gap:30px;margin-top:40px;color:var(--faint);font-size:13px}
+  .metarow b{color:var(--ink);font-family:var(--display);font-weight:600;font-size:20px;display:block}
+
+  /* floating resume card */
+  .float{position:relative;perspective:1400px}
+  .doc{background:#fdfdfb;color:#11151c;border-radius:14px;padding:26px 26px 30px;
+    box-shadow:0 40px 90px -20px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06);
+    transform:rotateY(-13deg) rotateX(5deg) rotate(1.5deg);transform-style:preserve-3d;
+    animation:floaty 7s ease-in-out infinite}
+  @keyframes floaty{0%,100%{transform:rotateY(-13deg) rotateX(5deg) rotate(1.5deg) translateY(0)}
+    50%{transform:rotateY(-10deg) rotateX(4deg) rotate(1deg) translateY(-12px)}}
+  .doc h3{font-family:var(--display);font-size:19px;margin:0;letter-spacing:-.01em}
+  .doc .role{color:#5b6472;font-size:12px;margin-top:3px}
+  .doc hr{border:0;border-top:1px solid #e7e9ee;margin:14px 0}
+  .doc .sec{font-size:9.5px;letter-spacing:.13em;color:#8a93a3;text-transform:uppercase;margin:0 0 7px}
+  .ln{height:7px;border-radius:4px;background:#e9ebf0;margin:6px 0}
+  .ln.s{background:linear-gradient(90deg,#2ee6c5,#7c6cff);opacity:.85}
+  .badge-ai{position:absolute;right:-14px;top:30px;background:#0a0e15;border:1px solid var(--line-2);
+    border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:9px;font-size:12.5px;
+    box-shadow:0 16px 40px rgba(0,0,0,.55);animation:floaty 7s ease-in-out infinite .4s}
+  .badge-ai .tick{width:18px;height:18px;border-radius:50%;background:var(--grad);display:grid;place-items:center}
+  .badge-ai .tick svg{width:10px;height:10px}
+
+  /* section shells */
+  section{position:relative;z-index:1;padding:74px 0}
+  .eyebrow{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:600}
+  h2{font-family:var(--display);font-weight:600;font-size:clamp(28px,3.4vw,42px);letter-spacing:-.02em;
+    line-height:1.08;margin:14px 0 0}
+  .lede{color:var(--muted);font-size:17px;max-width:34em;margin:16px 0 0;line-height:1.6}
+
+  /* logos strip */
+  .logos{display:flex;align-items:center;justify-content:center;gap:46px;flex-wrap:wrap;
+    opacity:.6;padding:30px 0 0;font-family:var(--display);font-weight:500;color:var(--muted);font-size:17px}
+
+  /* pipeline */
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:46px}
+  .step{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:22px;position:relative;
+    transition:.25s}
+  .step:hover{border-color:var(--line-2);transform:translateY(-4px);background:rgba(255,255,255,.05)}
+  .step.key{border-color:rgba(124,108,255,.5);background:linear-gradient(180deg,rgba(124,108,255,.10),transparent)}
+  .step .n{font-family:var(--display);font-size:13px;color:var(--faint)}
+  .step .ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;margin:8px 0 14px;
+    background:rgba(255,255,255,.06);border:1px solid var(--line)}
+  .step.key .ic{background:var(--grad)}.step.key .ic svg{stroke:#06080c}
+  .step h4{font-family:var(--display);font-weight:500;font-size:17px;margin:0 0 6px}
+  .step p{color:var(--muted);font-size:13.5px;line-height:1.55;margin:0}
+  .tag{display:inline-block;margin-top:12px;font-size:11px;color:var(--violet);
+    border:1px solid rgba(124,108,255,.4);border-radius:7px;padding:3px 8px}
+
+  /* bento */
+  .bento{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:46px}
+  .cell{background:var(--glass);border:1px solid var(--line);border-radius:18px;padding:26px;transition:.25s}
+  .cell:hover{border-color:var(--line-2);transform:translateY(-3px)}
+  .cell.w2{grid-column:span 2}
+  .cell .ci{width:42px;height:42px;border-radius:12px;background:rgba(46,230,197,.12);
+    border:1px solid rgba(46,230,197,.3);display:grid;place-items:center;margin-bottom:16px}
+  .cell h4{font-family:var(--display);font-weight:500;font-size:19px;margin:0 0 8px;letter-spacing:-.01em}
+  .cell p{color:var(--muted);font-size:14px;line-height:1.6;margin:0}
+  .mini-doc{margin-top:18px;display:flex;gap:10px}
+  .mini-doc .m{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;height:96px;
+    position:relative;overflow:hidden}
+  .mini-doc .m::before{content:"";position:absolute;left:10px;right:10px;top:12px;height:6px;border-radius:3px;
+    background:rgba(255,255,255,.12)}
+  .mini-doc .m.live::after{content:"";position:absolute;left:10px;top:26px;width:60%;height:5px;border-radius:3px;
+    background:var(--grad)}
+
+  /* showcase */
+  .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:42px}
+  .shot{aspect-ratio:.72;background:#fff;border-radius:12px;padding:14px;overflow:hidden;
+    box-shadow:0 24px 50px -22px rgba(0,0,0,.6);transition:.3s;transform:translateY(0)}
+  .shot:hover{transform:translateY(-8px) scale(1.02)}
+  .shot .sln{height:5px;border-radius:3px;background:#e9ebf0;margin:5px 0}
+  .shot .sln.h{height:9px;width:60%;background:#11151c;margin-bottom:9px}
+  .shot .sln.a{background:linear-gradient(90deg,#2ee6c5,#7c6cff)}
+
+  /* pricing */
+  .price{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:42px;max-width:760px}
+  .plan{background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:30px}
+  .plan.pro{border-color:rgba(124,108,255,.5);background:linear-gradient(180deg,rgba(124,108,255,.10),transparent)}
+  .plan .pn{font-family:var(--display);font-size:15px;color:var(--muted)}
+  .plan .pp{font-family:var(--display);font-size:42px;font-weight:600;margin:10px 0 2px;letter-spacing:-.02em}
+  .plan .pp small{font-size:15px;color:var(--faint);font-weight:400}
+  .plan ul{list-style:none;padding:0;margin:20px 0 24px;display:grid;gap:11px}
+  .plan li{display:flex;gap:10px;font-size:14px;color:var(--muted);align-items:center}
+  .plan li svg{flex:none;width:16px;height:16px;color:var(--teal)}
+
+  /* final cta */
+  .final{text-align:center;border:1px solid var(--line-2);border-radius:28px;padding:64px 28px;
+    background:radial-gradient(600px 300px at 50% 0,rgba(124,108,255,.18),transparent 70%),var(--glass);margin:30px 0}
+  .final h2{margin:0 auto}
+  footer{border-top:1px solid var(--line);padding:34px 0;color:var(--faint);font-size:13.5px}
+  .foot-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
+
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(max-width:900px){
+    .hero{grid-template-columns:1fr;gap:30px}.float{display:none}
+    .flow,.bento,.gallery{grid-template-columns:1fr 1fr}.cell.w2{grid-column:span 2}
+    .price{grid-template-columns:1fr}.nav-links{display:none}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand">
+      <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#06080c" stroke-width="2.2"><path d="M14 3v5h5M7 3h8l5 5v13H7z"/><path d="M9 13h6M9 17h4"/></svg></span>
+      Resume&nbsp;Agent
+    </div>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#showcase">Showcase</a>
+      <a href="#pricing">Pricing</a>
+    </div>
+    <div class="nav-cta">
+      <a class="btn btn-ghost">Sign in</a>
+      <a class="btn btn-grad">Start free <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="hero">
+    <canvas id="net"></canvas>
+    <div>
+      <span class="pill"><span class="dot"></span> Notion → AI → PDF · it checks its own work</span>
+      <h1>The resume that<br><span class="grad">builds and proofreads</span><br>itself.</h1>
+      <p class="sub">Pull your career data straight from Notion. The agent renders a flawless one‑page PDF, then <b style="color:var(--ink)">reads it back to verify every line landed</b> — and re‑tailors it to any job in seconds.</p>
+      <div class="hero-cta">
+        <a class="btn btn-grad">Build my resume <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn-line">▷ &nbsp;Watch the agent work</a>
+      </div>
+      <div class="metarow">
+        <div><b>1‑page</b> ATS‑safe, always</div>
+        <div><b>~12s</b> Notion to PDF</div>
+        <div><b>Self‑healing</b> compile loop</div>
+      </div>
+    </div>
+
+    <div class="float">
+      <div class="doc">
+        <h3>Krushal Kalkani</h3>
+        <div class="role">Software Engineer · Agentic AI</div>
+        <hr>
+        <p class="sec">Experience</p>
+        <div class="ln" style="width:92%"></div><div class="ln s" style="width:78%"></div><div class="ln" style="width:85%"></div>
+        <hr>
+        <p class="sec">Projects</p>
+        <div class="ln" style="width:88%"></div><div class="ln s" style="width:64%"></div>
+        <hr>
+        <p class="sec">Education</p>
+        <div class="ln" style="width:70%"></div>
+      </div>
+      <div class="badge-ai">
+        <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#06080c" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg></span>
+        1 page · 7/7 entries present
+      </div>
+    </div>
+  </header>
+</div>
+
+<div class="wrap">
+  <div class="logos reveal">
+    <span>Y Combinator</span><span>Sequoia</span><span>a16z</span><span>Notion</span><span>Vercel</span>
+  </div>
+</div>
+
+<section id="how" class="wrap">
+  <div class="reveal">
+    <span class="eyebrow">The agent loop</span>
+    <h2>Most builders generate. <br>Ours <span style="color:var(--violet)">verifies.</span></h2>
+    <p class="lede">A four‑step agentic pipeline with a reflection stage — it compiles, reads the PDF back, critiques itself, and fixes errors before you ever see them.</p>
+  </div>
+  <div class="flow">
+    <div class="step reveal">
+      <div class="n">01</div>
+      <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3f6fb" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div>
+      <h4>Fetch</h4><p>Reads your 7 Notion databases — the single source of truth for your career.</p>
+    </div>
+    <div class="step reveal">
+      <div class="n">02</div>
+      <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3f6fb" stroke-width="1.8"><path d="M12 3v18M3 12h18"/></svg></div>
+      <h4>Render</h4><p>Validates against a strict schema, then renders LaTeX and compiles a real PDF.</p>
+    </div>
+    <div class="step key reveal">
+      <div class="n">03 · the moat</div>
+      <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#06080c" stroke-width="1.9"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <h4>Reflect</h4><p>Reads its own PDF back — counts pages, confirms every entry made it onto the page.</p>
+      <span class="tag">self‑critique loop</span>
+    </div>
+    <div class="step reveal">
+      <div class="n">04</div>
+      <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3f6fb" stroke-width="1.8"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 17l-6.3 4.4L8 14 2 9.4h7.6z"/></svg></div>
+      <h4>Tailor</h4><p>Paste any job description — it reorders and rewrites to match the role.</p>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="wrap">
+  <div class="reveal">
+    <span class="eyebrow">Built for the job hunt</span>
+    <h2>Everything an applicant<br>actually needs.</h2>
+  </div>
+  <div class="bento">
+    <div class="cell w2 reveal">
+      <div class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2ee6c5" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h6"/></svg></div>
+      <h4>One source of truth, infinite resumes</h4>
+      <p>Your data lives in Notion. Edit once — every tailored version stays in sync. No more nine slightly‑different Word files.</p>
+      <div class="mini-doc"><div class="m"></div><div class="m live"></div><div class="m"></div></div>
+    </div>
+    <div class="cell reveal">
+      <div class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2ee6c5" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div>
+      <h4>ATS‑safe by design</h4>
+      <p>Clean LaTeX output that parses perfectly through every applicant tracking system.</p>
+    </div>
+    <div class="cell reveal">
+      <div class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2ee6c5" stroke-width="1.8"><path d="M21 12a9 9 0 11-6.2-8.6"/><path d="M21 4v5h-5"/></svg></div>
+      <h4>Self‑healing compiles</h4>
+      <p>LaTeX error? The agent reads the log, fixes it, and recompiles — untouched by you.</p>
+    </div>
+    <div class="cell w2 reveal">
+      <div class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2ee6c5" stroke-width="1.8"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg></div>
+      <h4>Tailoring with a memory</h4>
+      <p>Every tailored run is saved and re‑runnable. Compare versions, regenerate, and download the exact PDF you sent to each company.</p>
+    </div>
+  </div>
+</section>
+
+<section id="showcase" class="wrap">
+  <div class="reveal">
+    <span class="eyebrow">Showcase</span>
+    <h2>Real output. <span class="grad" style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent">Recruiter‑ready.</span></h2>
+    <p class="lede">Every resume is a compiled PDF — not an HTML mock. Hover to lift.</p>
+  </div>
+  <div class="gallery">
+    <div class="shot reveal"><div class="sln h"></div><div class="sln a" style="width:80%"></div><div class="sln"></div><div class="sln" style="width:70%"></div><div class="sln"></div><div class="sln a" style="width:55%"></div><div class="sln"></div></div>
+    <div class="shot reveal"><div class="sln h"></div><div class="sln"></div><div class="sln a" style="width:65%"></div><div class="sln"></div><div class="sln" style="width:85%"></div><div class="sln"></div><div class="sln a" style="width:60%"></div></div>
+    <div class="shot reveal"><div class="sln h"></div><div class="sln a" style="width:75%"></div><div class="sln"></div><div class="sln" style="width:60%"></div><div class="sln a"></div><div class="sln"></div><div class="sln" style="width:70%"></div></div>
+    <div class="shot reveal"><div class="sln h"></div><div class="sln"></div><div class="sln" style="width:80%"></div><div class="sln a" style="width:50%"></div><div class="sln"></div><div class="sln" style="width:65%"></div><div class="sln a"></div></div>
+  </div>
+</section>
+
+<section id="pricing" class="wrap">
+  <div class="reveal">
+    <span class="eyebrow">Pricing</span>
+    <h2>Start free. <br>Upgrade when you're hunting hard.</h2>
+  </div>
+  <div class="price">
+    <div class="plan reveal">
+      <div class="pn">Free</div>
+      <div class="pp">$0<small> / forever</small></div>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12l5 5L20 7"/></svg> Notion → PDF generation</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12l5 5L20 7"/></svg> Self‑checking reflection loop</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12l5 5L20 7"/></svg> 3 tailored versions / month</li>
+      </ul>
+      <a class="btn btn-line" style="width:100%;justify-content:center">Get started</a>
+    </div>
+    <div class="plan pro reveal">
+      <div class="pn" style="color:var(--violet)">Pro</div>
+      <div class="pp">$12<small> / month</small></div>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12l5 5L20 7"/></svg> Unlimited tailored resumes</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12l5 5L20 7"/></svg> Version history + compare</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12l5 5L20 7"/></svg> Premium template gallery</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12l5 5L20 7"/></svg> Priority compile queue</li>
+      </ul>
+      <a class="btn btn-grad" style="width:100%;justify-content:center">Go Pro</a>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="final reveal">
+    <span class="eyebrow">Ready in minutes</span>
+    <h2 style="max-width:16em">Your next role deserves a resume that proofreads itself.</h2>
+    <div class="hero-cta" style="justify-content:center;margin-top:30px">
+      <a class="btn btn-grad">Build my resume free <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap foot-in">
+    <div class="brand" style="font-size:15px"><span class="logo" style="width:26px;height:26px"><svg viewBox="0 0 24 24" fill="none" stroke="#06080c" stroke-width="2.2"><path d="M14 3v5h5M7 3h8l5 5v13H7z"/></svg></span>Resume Agent</div>
+    <div>© 2026 · Built with the Agentic AI Builder · Notion · Tectonic · Claude</div>
+  </div>
+</footer>
+
+<script>
+  // generative node network in the hero
+  const c = document.getElementById('net'), x = c.getContext('2d');
+  let W,H,pts;
+  function size(){ W=c.width=c.offsetWidth*devicePixelRatio; H=c.height=c.offsetHeight*devicePixelRatio;
+    const n = Math.min(70, Math.floor(W/26));
+    pts = Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,
+      vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25})); }
+  size(); addEventListener('resize',size);
+  function tick(){
+    x.clearRect(0,0,W,H);
+    for(const p of pts){ p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1; }
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const a=pts[i],b=pts[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);
+        if(d<150*devicePixelRatio){ const o=(1-d/(150*devicePixelRatio))*.5;
+          const g=x.createLinearGradient(a.x,a.y,b.x,b.y);
+          g.addColorStop(0,`rgba(46,230,197,${o})`); g.addColorStop(1,`rgba(124,108,255,${o})`);
+          x.strokeStyle=g; x.lineWidth=devicePixelRatio*.6; x.beginPath();
+          x.moveTo(a.x,a.y); x.lineTo(b.x,b.y); x.stroke(); } } }
+    for(const p of pts){ x.fillStyle='rgba(180,200,255,.55)'; x.beginPath();
+      x.arc(p.x,p.y,devicePixelRatio*1.4,0,7); x.fill(); }
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  // scroll reveal
+  const io = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }),{threshold:.15});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{ el.style.transitionDelay=(i%4*60)+'ms'; io.observe(el); });
+</script>
+</body>
+</html>

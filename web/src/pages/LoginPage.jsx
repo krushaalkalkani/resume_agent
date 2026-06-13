@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
-import { FileText } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import { Brand } from '../components/Marketing'
+import GenerativeBg from '../components/GenerativeBg'
 
 export default function LoginPage() {
   const { session, signIn, signUp, resetPassword, supabaseEnabled } = useAuth()
@@ -45,23 +46,19 @@ export default function LoginPage() {
   }
 
   const titles = {
-    signin: 'Sign in',
-    signup: 'Create account',
+    signin: 'Welcome back',
+    signup: 'Create your account',
     reset: 'Reset password',
   }
 
   return (
-    <div className="app-bg flex min-h-screen items-center justify-center px-4">
-      <div className="card w-full max-w-md p-8">
-        <div className="mb-6 flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--color-brand)] text-white">
-            <FileText className="h-4 w-4" />
-          </span>
-          <span className="text-lg font-semibold">Resume Agent</span>
-        </div>
+    <div className="app-bg flex min-h-screen items-center justify-center px-4 py-12">
+      <GenerativeBg className="pointer-events-none absolute inset-0 z-0 opacity-40" style={{ height: '100%', width: '100%' }} />
+      <div className="card-elevated relative z-10 w-full max-w-md p-8">
+        <div className="mb-7"><Brand /></div>
 
-        <h1 className="text-xl font-bold">{titles[mode]}</h1>
-        <p className="mt-1 text-sm text-[var(--color-muted)]">
+        <h1 className="font-display text-[24px] font-semibold tracking-tight text-[var(--color-ink)]">{titles[mode]}</h1>
+        <p className="mt-1.5 text-sm text-[var(--color-muted)]">
           {mode === 'reset'
             ? 'Enter your email and we will send a reset link.'
             : 'Your resume data is saved to your private account.'}
@@ -69,7 +66,7 @@ export default function LoginPage() {
 
         <form onSubmit={onSubmit} className="mt-6 space-y-4">
           <label className="block text-sm">
-            <span className="mb-1 block font-medium text-[var(--color-muted)]">Email</span>
+            <span className="mb-1.5 block font-medium text-[var(--color-muted)]">Email</span>
             <input
               type="email"
               required
@@ -81,7 +78,7 @@ export default function LoginPage() {
           </label>
           {mode !== 'reset' && (
             <label className="block text-sm">
-              <span className="mb-1 block font-medium text-[var(--color-muted)]">Password</span>
+              <span className="mb-1.5 block font-medium text-[var(--color-muted)]">Password</span>
               <input
                 type="password"
                 required
@@ -94,14 +91,10 @@ export default function LoginPage() {
             </label>
           )}
 
-          {error && <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
-          {message && <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">{message}</div>}
+          {error && <div className="rounded-xl border border-[rgba(226,75,74,.4)] bg-[rgba(226,75,74,.12)] px-3.5 py-2.5 text-sm text-[#f0a0a0]">{error}</div>}
+          {message && <div className="rounded-xl border border-[rgba(46,230,197,.4)] bg-[rgba(46,230,197,.1)] px-3.5 py-2.5 text-sm text-[var(--color-brand)]">{message}</div>}
 
-          <button
-            type="submit"
-            disabled={busy}
-            className="w-full rounded-lg bg-[var(--color-brand)] py-2.5 text-sm font-medium text-white hover:bg-[var(--color-brand-dark)] disabled:opacity-50"
-          >
+          <button type="submit" disabled={busy} className="btn btn-grad w-full">
             {busy ? 'Please wait…' : mode === 'signin' ? 'Sign in' : mode === 'signup' ? 'Sign up' : 'Send reset link'}
           </button>
         </form>
@@ -141,8 +134,8 @@ export default function LoginPage() {
           )}
         </p>
 
-        <Link to="/" className="mt-6 block text-center text-sm text-[var(--color-muted)] hover:underline">
-          Back to home
+        <Link to="/" className="mt-6 block text-center text-sm text-[var(--color-faint)] transition hover:text-[var(--color-muted)]">
+          ← Back to home
         </Link>
       </div>
     </div>

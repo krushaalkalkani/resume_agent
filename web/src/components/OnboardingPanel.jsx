@@ -18,7 +18,7 @@ export default function OnboardingPanel({ onImportNotion, onImportJson, onError,
   }
 
   return (
-    <div className="mb-6 rounded-xl border border-teal-200 bg-gradient-to-br from-teal-50 to-white p-6 shadow-sm">
+    <div className="mb-6 rounded-2xl border border-[rgba(46,230,197,.35)] p-6" style={{ background: 'linear-gradient(160deg, rgba(46,230,197,.10), transparent)' }}>
       <h2 className="text-lg font-semibold text-[var(--color-ink)]">Welcome — let&apos;s build your resume</h2>
       <p className="mt-1 text-sm text-[var(--color-muted)]">
         Your account is ready. Choose how you want to get started.

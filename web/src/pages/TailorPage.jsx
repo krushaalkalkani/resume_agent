@@ -168,7 +168,7 @@ export default function TailorPage() {
 
           {!busy && !result && (
             <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
-              <Target className="h-10 w-10 text-slate-300" />
+              <Target className="h-10 w-10 text-[var(--color-faint)]" />
               <p className="text-sm text-[var(--color-muted)]">Your tailored PDF appears here</p>
             </div>
           )}
@@ -185,7 +185,7 @@ export default function TailorPage() {
                   </div>
 
                   {summary.notes && (
-                    <p className="rounded-lg bg-slate-50 p-3 text-sm leading-relaxed text-[var(--color-muted)]">
+                    <p className="rounded-lg border border-[var(--color-border)] bg-white/5 p-3 text-sm leading-relaxed text-[var(--color-muted)]">
                       {summary.notes}
                     </p>
                   )}
