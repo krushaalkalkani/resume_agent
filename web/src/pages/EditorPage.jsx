@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Download, Sparkles, RefreshCw } from 'lucide-react'
+import { Plus, Download, Sparkles, RefreshCw, ChevronUp, ChevronDown } from 'lucide-react'
 import Layout, { Alert, Badge, Btn, Panel, Spinner } from '../Layout'
 import OnboardingPanel from '../components/OnboardingPanel'
 import { useAuth } from '../context/AuthContext'
@@ -99,6 +99,13 @@ export default function EditorPage() {
   const updateItem = (k, i, f, v) => setList(k, resume[k].map((it, idx) => (idx === i ? { ...it, [f]: v } : it)))
   const addItem = (k) => setList(k, [...(resume[k] || []), structuredClone(TEMPLATES[k])])
   const removeItem = (k, i) => setList(k, resume[k].filter((_, idx) => idx !== i))
+  const moveItem = (k, i, dir) => {
+    const j = i + dir
+    if (j < 0 || j >= resume[k].length) return
+    const next = resume[k].slice()
+    ;[next[i], next[j]] = [next[j], next[i]]
+    setList(k, next)
+  }
 
   async function onGenerate() {
     setGenerating(true); setError(null)
@@ -272,9 +279,31 @@ export default function EditorPage() {
                   <div key={i} className="rounded-lg border border-[var(--color-border)] bg-slate-50/50 p-4">
                     <div className="mb-3 flex items-center justify-between border-b border-[var(--color-border)] pb-2">
                       <span className="font-medium text-[var(--color-ink)]">{it[fields[0][0]] || `Entry ${i + 1}`}</span>
-                      <button type="button" onClick={() => removeItem(active, i)} className="text-xs font-medium text-red-600 hover:underline">
-                        Remove
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => moveItem(active, i, -1)}
+                          disabled={i === 0}
+                          title="Move up"
+                          aria-label="Move up"
+                          className="rounded p-1 text-[var(--color-muted)] hover:bg-slate-100 hover:text-[var(--color-brand)] disabled:cursor-not-allowed disabled:opacity-30"
+                        >
+                          <ChevronUp className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveItem(active, i, 1)}
+                          disabled={i === items.length - 1}
+                          title="Move down"
+                          aria-label="Move down"
+                          className="rounded p-1 text-[var(--color-muted)] hover:bg-slate-100 hover:text-[var(--color-brand)] disabled:cursor-not-allowed disabled:opacity-30"
+                        >
+                          <ChevronDown className="h-4 w-4" />
+                        </button>
+                        <button type="button" onClick={() => removeItem(active, i)} className="ml-2 text-xs font-medium text-red-600 hover:underline">
+                          Remove
+                        </button>
+                      </div>
                     </div>
                     <div className="grid gap-4 sm:grid-cols-2">
                       {fields.map(([k, label, type]) => (
