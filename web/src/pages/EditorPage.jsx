@@ -4,9 +4,10 @@ import { Plus, Download, Sparkles, RefreshCw } from 'lucide-react'
 import Layout, { Alert, Badge, Btn, Panel, Spinner } from '../Layout'
 import OnboardingPanel from '../components/OnboardingPanel'
 import { useAuth } from '../context/AuthContext'
-import { getResume, generate, fetchNotion, saveResume, pdfUrl, previewUrl, warmApi } from '../api'
+import { getResume, generate, fetchNotion, saveResume, warmApi } from '../api'
 import { resumePdfFilename } from '../pdfFilename'
 import { isResumeEmpty } from '../lib/resumeUtils'
+import { useResumeArtifacts } from '../lib/useResumeArtifacts'
 
 const SECTIONS = [
   { key: 'profile', label: 'Profile' },
@@ -72,7 +73,7 @@ export default function EditorPage() {
   const [generating, setGenerating] = useState(false)
   const [busyNotion, setBusyNotion] = useState(false)
   const [report, setReport] = useState(null)
-  const [previewTs, setPreviewTs] = useState(0)
+  const { previewSrc, pdfHref, load: loadArtifacts } = useResumeArtifacts()
   const [error, setError] = useState(null)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -104,7 +105,7 @@ export default function EditorPage() {
     try {
       const data = await generate(cleanResume(resume))
       setReport(data)
-      if (data.ok) setPreviewTs(Date.now())
+      if (data.ok) await loadArtifacts('master')
       else setError(data.log ? `PDF compilation failed: ${data.log}` : 'PDF compilation failed.')
     } catch (e) { setError(e.message) } finally { setGenerating(false) }
   }
@@ -170,7 +171,7 @@ export default function EditorPage() {
     )
   }
 
-  const hasPDF = previewTs > 0 && report?.ok
+  const hasPDF = report?.ok && previewSrc && pdfHref
   const pdfFilename = report?.pdf_filename || resumePdfFilename(resume.profile)
   const meta = SECTIONS.find((s) => s.key === active)
   const items = resume[active] || []
@@ -188,7 +189,7 @@ export default function EditorPage() {
             {busyNotion ? <Spinner /> : <RefreshCw className="h-4 w-4" />}
             Notion
           </Btn>
-          <Btn href={hasPDF ? pdfUrl() : undefined} download={hasPDF ? pdfFilename : undefined} disabled={!hasPDF}>
+          <Btn href={hasPDF ? pdfHref : undefined} download={hasPDF ? pdfFilename : undefined} disabled={!hasPDF}>
             <Download className="h-4 w-4" /> PDF
           </Btn>
           <Btn onClick={onSave} disabled={saving}>
@@ -312,8 +313,8 @@ export default function EditorPage() {
               </div>
             )}
             {hasPDF ? (
-              <a href={pdfUrl()} target="_blank" rel="noreferrer" className="block">
-                <img src={previewUrl('master', previewTs)} alt="Resume preview" className="preview-img w-full" />
+              <a href={pdfHref} target="_blank" rel="noreferrer" className="block">
+                <img src={previewSrc} alt="Resume preview" className="preview-img w-full" />
               </a>
             ) : (
               <div className="flex aspect-[8.5/11] flex-col items-center justify-center rounded-lg border border-dashed border-[var(--color-border)] bg-slate-50 text-center">

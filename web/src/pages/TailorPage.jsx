@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Sparkles, Download, Target, History } from 'lucide-react'
 import Layout, { Alert, Badge, Btn, Panel, Spinner } from '../Layout'
-import { tailorToJob, listTailored, regenerateTailored, pdfUrl, previewUrl } from '../api'
+import { tailorToJob, listTailored, regenerateTailored } from '../api'
 import { resumePdfFilename } from '../pdfFilename'
+import { useResumeArtifacts } from '../lib/useResumeArtifacts'
 
 const EXAMPLE = `Frontend Engineer — React, TypeScript, CSS
 
@@ -28,13 +29,13 @@ export default function TailorPage() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const [result, setResult] = useState(null)
-  const [previewTs, setPreviewTs] = useState(0)
+  const { previewSrc, pdfHref, load: loadArtifacts } = useResumeArtifacts()
   const [history, setHistory] = useState([])
   const [loadingHistory, setLoadingHistory] = useState(true)
   const [activeEntryId, setActiveEntryId] = useState(null)
 
   const summary = result?.summary
-  const hasPDF = result?.pdf?.ok && previewTs > 0
+  const hasPDF = result?.pdf?.ok && previewSrc && pdfHref
   const pdfFilename = result?.pdf_filename || resumePdfFilename(result?.resume?.profile)
 
   useEffect(() => {
@@ -57,8 +58,8 @@ export default function TailorPage() {
       const data = await tailorToJob({ job_description: jd, generate_pdf: true })
       setResult(data)
       setActiveEntryId(data.entry_id || null)
-      if (data.pdf?.ok) setPreviewTs(Date.now())
-      else if (!data.pdf?.ok) setError('Tailoring worked but PDF failed to compile.')
+      if (data.pdf?.ok) await loadArtifacts('tailored')
+      else setError('Tailoring worked but PDF failed to compile.')
       const refreshed = await listTailored()
       setHistory(refreshed.items || [])
     } catch (e) {
@@ -75,7 +76,7 @@ export default function TailorPage() {
       const pdf = await regenerateTailored(entryId)
       setActiveEntryId(entryId)
       setResult({ pdf, pdf_filename: pdf.pdf_filename })
-      if (pdf.ok) setPreviewTs(Date.now())
+      if (pdf.ok) await loadArtifacts('tailored')
       else setError('Could not rebuild PDF for this version.')
     } catch (e) {
       setError(e.message)
@@ -91,7 +92,7 @@ export default function TailorPage() {
       actions={
         <>
           <Btn
-            href={hasPDF ? pdfUrl('tailored') : undefined}
+            href={hasPDF ? pdfHref : undefined}
             download={hasPDF ? pdfFilename : undefined}
             disabled={!hasPDF}
           >
@@ -213,8 +214,8 @@ export default function TailorPage() {
               )}
 
               {hasPDF ? (
-                <a href={pdfUrl('tailored')} target="_blank" rel="noreferrer" className="block">
-                  <img src={previewUrl('tailored', previewTs)} alt="Tailored resume" className="preview-img w-full" />
+                <a href={pdfHref} target="_blank" rel="noreferrer" className="block">
+                  <img src={previewSrc} alt="Tailored resume" className="preview-img w-full" />
                 </a>
               ) : (
                 <p className="text-sm text-[var(--color-muted)]">PDF preview not available.</p>

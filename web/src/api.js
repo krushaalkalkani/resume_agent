@@ -54,17 +54,23 @@ async function asJson(res) {
   return data
 }
 
-export const pdfUrl = (variant = 'master') => {
-  const path = variant === 'tailored' ? '/api/pdf?variant=tailored' : '/api/pdf'
-  return apiPath(path)
+// The /api/pdf and /api/preview.png endpoints require the Authorization
+// header, which <img src> and <a href> requests cannot send. Fetch them with
+// auth and hand the UI a same-origin object URL instead (caller revokes it).
+async function fetchObjectUrl(path) {
+  const res = await apiFetch(path)
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}))
+    throw new Error(formatError(data, `${res.status} ${res.statusText}`))
+  }
+  return URL.createObjectURL(await res.blob())
 }
 
-export const previewUrl = (variant = 'master', ts = Date.now()) => {
-  const path = variant === 'tailored'
-    ? `/api/preview.png?variant=tailored&t=${ts}`
-    : `/api/preview.png?t=${ts}`
-  return apiPath(path)
-}
+export const pdfObjectUrl = (variant = 'master') =>
+  fetchObjectUrl(variant === 'tailored' ? '/api/pdf?variant=tailored' : '/api/pdf')
+
+export const previewObjectUrl = (variant = 'master') =>
+  fetchObjectUrl(variant === 'tailored' ? '/api/preview.png?variant=tailored' : '/api/preview.png')
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
