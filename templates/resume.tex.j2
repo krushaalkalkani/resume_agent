@@ -104,7 +104,7 @@
     \resumeSubHeadingListStart
 %% for p in projects
       \resumeProjectHeading
-        {\textbf{\VAR{ p.name | tex }}\BLOCK{ if p.tech_stack } $|$ \emph{\VAR{ p.tech_stack | tex }}\BLOCK{ endif }}{\BLOCK{ if p.github }\href{\VAR{ p.github | ensure_scheme }}{\underline{Code}}\BLOCK{ endif }\BLOCK{ if p.github and p.demo } $|$ \BLOCK{ endif }\BLOCK{ if p.demo }\href{\VAR{ p.demo | ensure_scheme }}{\underline{Demo}}\BLOCK{ endif }\BLOCK{ if p.date } \quad \VAR{ p.date | tex }\BLOCK{ endif }}
+        {\textbf{\VAR{ p.name | tex }}\BLOCK{ if p.tech_stack } $|$ \emph{\VAR{ p.tech_stack | tex }}\BLOCK{ endif }}{\BLOCK{ if p.github }\href{\VAR{ p.github | ensure_scheme | href }}{\underline{Code}}\BLOCK{ endif }\BLOCK{ if p.github and p.demo } $|$ \BLOCK{ endif }\BLOCK{ if p.demo }\href{\VAR{ p.demo | ensure_scheme | href }}{\underline{Demo}}\BLOCK{ endif }\BLOCK{ if p.date } \quad \VAR{ p.date | tex }\BLOCK{ endif }}
 %% if p.bullets
           \resumeItemListStart
 %% for b in p.bullets

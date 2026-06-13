@@ -7,8 +7,8 @@ custom delimiters so the template still looks like LaTeX:
     %% for item in experience  -> a line statement (block)
     %# this is a template comment
 
-Every user-supplied string MUST go through the `tex` filter to escape special
-characters, otherwise an `&` or `_` in your data will break compilation.
+Every visible user-supplied string MUST go through the `tex` filter. Link
+targets inside `\href{...}` use the narrower `href` filter instead.
 """
 
 from __future__ import annotations
@@ -73,6 +73,22 @@ def ensure_scheme(url: str) -> str:
     return url
 
 
+def escape_href_target(value) -> str:
+    """Escape a URL/email target for use inside a LaTeX ``\\href{...}`` argument."""
+    if value is None:
+        return ""
+    replacements = {
+        "\\": r"\textbackslash{}",
+        "&": r"\&",
+        "%": r"\%",
+        "#": r"\#",
+        "_": r"\_",
+        "{": r"\{",
+        "}": r"\}",
+    }
+    return "".join(replacements.get(ch, ch) for ch in str(value).strip())
+
+
 def build_contact_line(profile) -> str:
     """Build the header contact line as ready-to-use LaTeX (already escaped).
 
@@ -87,12 +103,12 @@ def build_contact_line(profile) -> str:
         parts.append(r"\mbox{" + escape_latex(profile.phone) + "}")
     if profile.email:
         parts.append(
-            rf"\href{{mailto:{profile.email}}}{{\underline{{{escape_latex(profile.email)}}}}}"
+            rf"\href{{mailto:{escape_href_target(profile.email)}}}{{\underline{{{escape_latex(profile.email)}}}}}"
         )
     for url in (profile.linkedin, profile.github, profile.portfolio):
         if url:
             parts.append(
-                rf"\href{{{ensure_scheme(url)}}}{{\underline{{{escape_latex(url_no_scheme(url))}}}}}"
+                rf"\href{{{escape_href_target(ensure_scheme(url))}}}{{\underline{{{escape_latex(url_no_scheme(url))}}}}}"
             )
     # Breakable spaces around the separator: if the line is ever too long it wraps
     # at a separator (clean) rather than inside a field like the phone number.
@@ -117,6 +133,7 @@ def make_env(templates_dir: Path) -> jinja2.Environment:
     env.filters["tex"] = escape_latex
     env.filters["url_no_scheme"] = url_no_scheme
     env.filters["ensure_scheme"] = ensure_scheme
+    env.filters["href"] = escape_href_target
     return env
 
 
